@@ -1,4 +1,4 @@
-MODULES = iterator repeat take over_array chain map filters
+MODULES = iterator repeat take over_array chain map filters enumerate
 STATICLIB = citer.a
 HEADER = citer.h
 
