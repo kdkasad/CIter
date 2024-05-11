@@ -5,7 +5,8 @@
 #include <citer.h>
 
 typedef struct citer_over_array_data {
-	void **array;
+	void *array;
+	size_t itemsize;
 	size_t len;
 	size_t i;
 } citer_over_array_data_t;
@@ -13,7 +14,8 @@ typedef struct citer_over_array_data {
 static void *citer_over_array_next(void *_data) {
 	citer_over_array_data_t *data = (citer_over_array_data_t *) _data;
 	if (data->i < data->len) {
-		return data->array[data->i++];
+		/* Cast to (char *) so pointer arithmetic is in terms of bytes. */
+		return (void *) (((char *) data->array) + (data->i++ * data->itemsize));
 	} else {
 		return NULL;
 	}
@@ -24,10 +26,11 @@ void citer_over_array_free_data(void **_data_ptr) {
 	*_data_ptr = NULL;
 }
 
-iterator_t *citer_over_array(void *array[], size_t len) {
+iterator_t *citer_over_array(void *array, size_t itemsize, size_t len) {
 	citer_over_array_data_t *data = malloc(sizeof(*data));
 	*data = (citer_over_array_data_t) {
 		.array = array,
+		.itemsize = itemsize,
 		.len = len,
 		.i = 0,
 	};

@@ -8,12 +8,12 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	iterator_t *it = citer_over_array((void **) (argv + 1), argc - 1);
+	iterator_t *it = citer_over_array((void **) argv + 1, sizeof(*argv), argc - 1);
 
-	char *item;
+	char **itemptr;
 	unsigned long count = 0;
-	while ((item = (char *) citer_next(it))) {
-		printf("Got: %s\n", item);
+	while ((itemptr = (char **) citer_next(it))) {
+		printf("Got: %s\n", *itemptr);
 		count++;
 	}
 	printf("Count: %lu\n", count);
