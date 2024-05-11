@@ -21,6 +21,26 @@ bool citer_any(iterator_t *it, citer_predicate_t predicate, void *extra_data) {
     return false;
 }
 
+void *citer_max(iterator_t *it, citer_cmp_fn_t cmp, void *extra_data) {
+    void *max = NULL;
+    void *cur;
+    while ((cur = citer_next(it))) {
+        if (!max || (cmp(cur, max, extra_data) > 0))
+            max = cur;
+    }
+    return max;
+}
+
+void *citer_min(iterator_t *it, citer_cmp_fn_t cmp, void *extra_data) {
+    void *min = NULL;
+    void *cur;
+    while ((cur = citer_next(it))) {
+        if (!min || (cmp(cur, min, extra_data) < 0))
+            min = cur;
+    }
+    return min;
+}
+
 typedef struct citer_filter_data {
     iterator_t *orig;
     citer_predicate_t predicate;

@@ -16,6 +16,20 @@
 typedef bool (*citer_predicate_t)(void *item, void *extra_data);
 
 /*
+ * Comparison function type.
+ *
+ * Accepts two items plus an extra data argument.
+ * The extra data argument is implementation-defined and can be used to pass
+ * additional data to the comparison function.
+ *
+ * Returns:
+ *   < 0 if the first item is less than the second item,
+ *   0 if the items are equal,
+ *   > 0 if the first item is greater than the second item.
+ */
+typedef int (*citer_cmp_fn_t)(void *item1, void *item2, void *extra_data);
+
+/*
  * Returns true if all elements of the iterator satisfy the predicate.
  */
 bool citer_all(iterator_t *, citer_predicate_t, void *);
@@ -24,6 +38,31 @@ bool citer_all(iterator_t *, citer_predicate_t, void *);
  * Returns true if any element of the iterator satisfies the predicate.
  */
 bool citer_any(iterator_t *, citer_predicate_t, void *);
+
+/*
+ * Returns the minimum item of the iterator.
+ *
+ * Uses the provided compare function to compare items.
+ * See citer_cmp_fn_t for more information.
+ *
+ * The third argument to this function is the extra data to be passed to the compare function.
+ *
+ * This function consumes the entire iterator but does not free it.
+ */
+void *citer_min(iterator_t *it, citer_cmp_fn_t cmp, void *extra_data);
+
+/*
+ * Returns the maximum item of the iterator.
+ *
+ * Uses the provided compare function to compare items.
+ * See citer_cmp_fn_t for more information.
+ *
+ * The third argument to this function is the extra data to be passed to the compare function.
+ *
+ * This function consumes the entire iterator but does not free it.
+ */
+void *citer_max(iterator_t *it, citer_cmp_fn_t cmp, void *extra_data);
+
 
 /*
  * Iterator which filters out elements that do not satisfy the predicate.
