@@ -8,7 +8,7 @@ static void *citer_repeat_next(void *data) {
 	return data;
 }
 
-static void citer_repeat_free_data(void **data_ptr) {
+static void citer_repeat_free_data(void *data) {
 	return;
 }
 

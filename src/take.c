@@ -19,11 +19,10 @@ static void *citer_take_next(void *_data) {
 	}
 }
 
-static void citer_take_free_data(void **_data_ptr) {
-	citer_take_data_t **data_ptr = (citer_take_data_t **) _data_ptr;
-	citer_free((*data_ptr)->original);
-	free(*data_ptr);
-	*data_ptr = NULL;
+static void citer_take_free_data(void *_data) {
+	citer_take_data_t *data = (citer_take_data_t *) _data;
+	citer_free(data->original);
+	free(data);
 }
 
 iterator_t *citer_take(iterator_t *original, size_t count) {

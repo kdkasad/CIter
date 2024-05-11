@@ -13,7 +13,8 @@ void *citer_next(iterator_t *it) {
  * Free an iterator's data
  */
 void citer_free_data(iterator_t *it) {
-	it->free_data(&it->data);
+	it->free_data(it->data);
+	it->data = NULL;
 }
 
 /*

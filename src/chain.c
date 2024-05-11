@@ -18,12 +18,11 @@ static void *citer_chain_next(void *_data) {
 		return citer_next(data->second);
 }
 
-static void citer_chain_free_data(void **_data_ptr) {
-	citer_chain_data_t **data_ptr = (citer_chain_data_t **) _data_ptr;
-	citer_free((*data_ptr)->first);
-	citer_free((*data_ptr)->second);
-	free(*data_ptr);
-	*data_ptr = NULL;
+static void citer_chain_free_data(void *_data) {
+	citer_chain_data_t *data = (citer_chain_data_t *) _data;
+	citer_free(data->first);
+	citer_free(data->second);
+	free(data);
 }
 
 iterator_t *citer_chain(iterator_t *first, iterator_t *second) {

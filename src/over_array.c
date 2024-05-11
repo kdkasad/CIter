@@ -21,9 +21,8 @@ static void *citer_over_array_next(void *_data) {
 	}
 }
 
-void citer_over_array_free_data(void **_data_ptr) {
-	free(*_data_ptr);
-	*_data_ptr = NULL;
+void citer_over_array_free_data(void *_data) {
+	free(_data);
 }
 
 iterator_t *citer_over_array(void *array, size_t itemsize, size_t len) {

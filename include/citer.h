@@ -12,7 +12,7 @@
 typedef struct iterator_t {
   void *data;
   void *(*next)(void *data);
-  void (*free_data)(void **data_ptr);
+  void (*free_data)(void *data);
 } iterator_t;
 
 /*
