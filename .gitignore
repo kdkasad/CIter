@@ -1,0 +1,6 @@
+*.a
+*.o
+/build/
+
+/examples/*
+!/examples/*.c
