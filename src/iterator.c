@@ -1,6 +1,6 @@
-#include <stdlib.h>
+#include "iterator.h"
 
-#include <citer.h>
+#include <stdlib.h>
 
 /*
  * Get the next item from an iterator_t.

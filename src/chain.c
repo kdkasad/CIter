@@ -2,8 +2,6 @@
 
 #include <stdlib.h>
 
-#include <citer.h>
-
 typedef struct citer_chain_data {
 	iterator_t *first;
 	iterator_t *second;

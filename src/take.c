@@ -2,8 +2,6 @@
 
 #include <stdlib.h>
 
-#include <citer.h>
-
 typedef struct citer_take_data {
 	iterator_t *original;
 	size_t count;

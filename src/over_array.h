@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-#include <citer.h>
+#include "iterator.h"
 
 /*
  * Iterator over an array.

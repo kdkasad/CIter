@@ -1,5 +1,5 @@
-#ifndef _CITER_H_
-#define _CITER_H_
+#ifndef _CITER_ITERATOR_H_
+#define _CITER_ITERATOR_H_
 
 /*
  * Iterator structure
@@ -30,11 +30,4 @@ void citer_free_data(iterator_t *);
  */
 void citer_free(iterator_t *);
 
-#include "chain.h"
-#include "filters.h"
-#include "map.h"
-#include "over_array.h"
-#include "repeat.h"
-#include "take.h"
-
-#endif /* _CITER_H_ */
+#endif /* _CITER_ITERATOR_H_ */

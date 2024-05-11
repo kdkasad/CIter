@@ -3,8 +3,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#include <citer.h>
-
 bool citer_all(iterator_t *it, citer_predicate_t predicate, void *extra_data) {
     void *item;
     while ((item = citer_next(it))) {

@@ -1,7 +1,7 @@
 #ifndef _CITER_REPEAT_H_
 #define _CITER_REPEAT_H_
 
-#include <citer.h>
+#include "iterator.h"
 
 iterator_t *citer_repeat(void *);
 

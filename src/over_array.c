@@ -2,8 +2,6 @@
 
 #include <stdlib.h>
 
-#include <citer.h>
-
 typedef struct citer_over_array_data {
 	void *array;
 	size_t itemsize;

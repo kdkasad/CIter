@@ -2,8 +2,6 @@
 
 #include <stdlib.h>
 
-#include <citer.h>
-
 static void *citer_repeat_next(void *data) {
 	return data;
 }

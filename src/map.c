@@ -2,8 +2,6 @@
 
 #include <stdlib.h>
 
-#include <citer.h>
-
 typedef struct citer_map_data {
     iterator_t *orig;
     void *(*fn)(void *);

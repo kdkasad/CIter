@@ -1,15 +1,14 @@
 MODULES = iterator repeat take over_array chain map filters
-NOINCLUDES = iterator
-INCLUDE = include/citer.h
 STATICLIB = citer.a
+HEADER = citer.h
 
-EXAMPLES = repeat_take over_array chain map filter
+EXAMPLES = repeat_take over_array chain map filter enumerate
 EXAMPLES_BIN = $(addprefix examples/,$(EXAMPLES))
 
 OBJS = $(patsubst %,build/%.o,$(MODULES))
 
 CFLAGS = -Wall -Werror -std=c99
-CPPFLAGS = -I./include -iquote ./src
+CPPFLAGS = -I.
 
 ifneq ($(DBG),)
 # Debugging flags
@@ -27,7 +26,7 @@ examples: $(EXAMPLES_BIN)
 
 .PHONY: clean
 clean: | clean-examples
-	rm -f $(OBJS) $(STATICLIB)
+	rm -f $(OBJS) $(STATICLIB) $(HEADER)
 	rm -fd build
 
 .PHONY: clean-examples
@@ -40,8 +39,11 @@ $(STATICLIB): $(OBJS)
 build:
 	mkdir -p build
 
-$(OBJS): build/%.o: src/%.c $(INCLUDE) | build
+$(OBJS): build/%.o: src/%.c $(HEADER) | build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 
 $(EXAMPLES_BIN): examples/%: examples/%.c $(STATICLIB)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $< $(STATICLIB) $(LDFLAGS) $(LDLIBS)
+
+$(HEADER): $(patsubst %,src/%.h,$(MODULES))
+	sed '/^#include "[^"][^"]*"$$/d' $^ > $@

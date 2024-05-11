@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
-#include <citer.h>
+#include "iterator.h"
 
 /*
  * Predicate function type.

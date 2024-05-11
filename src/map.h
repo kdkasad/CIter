@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-#include <citer.h>
+#include "iterator.h"
 
 iterator_t *citer_map(iterator_t *, void *(*)(void *));
 
