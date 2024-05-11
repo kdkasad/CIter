@@ -31,6 +31,7 @@ void citer_free_data(iterator_t *);
 void citer_free(iterator_t *);
 
 #include "chain.h"
+#include "map.h"
 #include "over_array.h"
 #include "repeat.h"
 #include "take.h"

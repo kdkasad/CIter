@@ -1,9 +1,9 @@
-MODULES = iterator repeat take over_array chain
+MODULES = iterator repeat take over_array chain map
 NOINCLUDES = iterator
 INCLUDE = include/citer.h
 STATICLIB = citer.a
 
-EXAMPLES = repeat_take over_array chain
+EXAMPLES = repeat_take over_array chain map
 EXAMPLES_BIN = $(addprefix examples/,$(EXAMPLES))
 
 OBJS = $(patsubst %,build/%.o,$(MODULES))
