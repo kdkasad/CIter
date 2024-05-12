@@ -1,5 +1,5 @@
 VERSION = 0.0.0
-STATICLIB = citer.a
+STATICLIB = libciter.a
 DYLIB = libciter.so
 HEADER = citer.h
 

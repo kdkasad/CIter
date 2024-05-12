@@ -1,11 +1,11 @@
 citer.h
-*.a
+lib*.a
 *.o
 /build/
-*.so
-*.so.?
-*.so.?.?
-*.so.?.?.?
+lib*.so
+lib*.so.?
+lib*.so.?.?
+lib*.so.?.?.?
 
 /examples/*
 !/examples/*.c
