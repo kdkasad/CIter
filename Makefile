@@ -72,3 +72,8 @@ $(SONAME): $(DYLIB).$(VERSION)
 
 $(DYLIB).$(VERSION): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) -shared $(LDLIBS)
+
+# Set SONAME on Linux
+ifeq ($(shell uname -s),Linux)
+$(DYLIB).$(VERSION): LDFLAGS += -Wl,-soname,$(SONAME)
+endif
