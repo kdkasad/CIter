@@ -24,6 +24,9 @@ DYLIB = libciter.so
 HEADER = citer.h
 LICENSE_HEADER_LENGTH = 18
 
+# Order matters here. The "iterator" module must come first, so that when
+# citer.h is constructed, the iterator_t type is defined for all subsequent
+# modules which use it.
 MODULES = \
 	iterator \
 	repeat \
