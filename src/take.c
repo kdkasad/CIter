@@ -37,3 +37,27 @@ iterator_t *citer_take(iterator_t *original, size_t count) {
 	};
 	return it;
 }
+
+static void *citer_skip_next(void *_data) {
+	citer_take_data_t *data = (citer_take_data_t *) _data;
+	while (data->count > 0) {
+		data->count--;
+		citer_next(data->original);
+	}
+	return citer_next(data->original);
+}
+
+iterator_t *citer_skip(iterator_t *original, size_t count) {
+	citer_take_data_t *data = malloc(sizeof(*data));
+	*data = (citer_take_data_t) {
+		.original = original,
+		.count = count,
+	};
+	iterator_t *it = malloc(sizeof(*it));
+	*it = (iterator_t) {
+		.data = data,
+		.next = citer_skip_next,
+		.free_data = citer_take_free_data,
+	};
+	return it;
+}
