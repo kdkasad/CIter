@@ -31,6 +31,8 @@ run() {
 run ./repeat_take item 7
 run ./over_array a bb ccc dddd
 run ./chain a 3 b 4
+run ./enumerate a b c d
 run ./map 1 2 3 4
-run ./filter 2 1 2 3 4 5 6 7 8 9 10
 run ./chunked 3 {1..20}
+run ./filter 2 1 2 3 4 5 6 7 8 9 10
+run ./minmax {1..50}
