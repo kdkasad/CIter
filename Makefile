@@ -11,7 +11,8 @@ MODULES = \
 	chain \
 	map \
 	filters \
-	enumerate
+	enumerate \
+	chunked
 
 EXAMPLES = \
 	repeat_take \
@@ -20,7 +21,8 @@ EXAMPLES = \
 	map \
 	filter \
 	enumerate \
-	minmax
+	minmax \
+	chunked
 EXAMPLES_BIN = $(addprefix examples/,$(EXAMPLES))
 
 OBJS = $(patsubst %,build/%.o,$(MODULES))
