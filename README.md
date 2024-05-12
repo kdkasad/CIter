@@ -45,7 +45,63 @@ Running `make install` will:
 To uninstall CIter, run `make uninstall`.
 Just like when installing, set the `PREFIX` accordingly.
 
-## Implemented so far
+## Programming with CIter
+
+CIter provides a set of functions and types to work with iterators.
+An iterator is an object which repeatedly returns items.
+
+### Items and types
+
+An "item" in this case is opaque data and is handled as a `void *`.
+This can be cast to the appropriate type when needed.
+An iterator over integers could use pointers to integers, casting each `void *` to an `int *`.
+Alternatively, the `void *` could be cast to an `int` directly, since `sizeof(int) <= sizeof(void *)`.
+
+It is up to the user to keep track of data types and cast appropriately.
+If you don't like this, try Rust.
+
+### Using iterators
+
+Iterators are created using the `citer_<iterator>(...)` functions.
+These functions take parameters as necessary and return a pointer to a heap-allocated iterator.
+
+Going forward, assume `it` is of the type `iterator_t *`, a pointer to an iterator.
+
+To free an iterator, call `citer_free(it)`.
+`citer_free(it)` should not free any memory which was not allocated by `citer_*()` functions.
+This means that if you pass heap-allocated memory to iterator functions, you must free it yourself.
+
+Calling `citer_next(it)` will return the next item in the iterator, or `NULL` if the iterator is exhausted.
+
+### Implementing your own iterators
+
+An iterator is very easy to implement.
+Take a look in any of the files in the `src/` directory to see how they are implemented.
+`repeat.c` is especially simple, and `map.c` is a good example of a very powerful iterator
+which still doesn't require much code.
+
+The `iterator_t` type is defined as follows:
+```c
+typedef struct iterator_t {
+    void *data;
+    void *(*next)(void *data);
+    void (*free_data)(void *data);
+} iterator_t;
+```
+
+The `data` field can be anything you want.
+It is passed to the `next` function and is not used anywhere else (except `free_data()`).
+
+The `next` function should return the next item of this iterator, or `NULL` if the iterator is exhausted.
+
+The `free_data` function should deallocate any heap-allocated memory in the `data` field.
+If `data` is a pointer to a struct, and that struct was heap-allocated when the iterator was created,
+`free_data` should free that struct.
+
+It is recommended to create a function to create an iterator,
+which heap-allocates the `iterator_t` struct and sets the fields appropriately.
+
+## List of iterators and functions
 
 All iterators and functions below are prefixed with the name `citer_` to avoid clobbering the global namespace.
 
