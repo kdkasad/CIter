@@ -1,10 +1,26 @@
 VERSION = 0.0.0
-MODULES = iterator repeat take over_array chain map filters enumerate
 STATICLIB = citer.a
 DYLIB = libciter.so
 HEADER = citer.h
 
-EXAMPLES = repeat_take over_array chain map filter enumerate minmax
+MODULES = \
+	iterator \
+	repeat \
+	take \
+	over_array \
+	chain \
+	map \
+	filters \
+	enumerate
+
+EXAMPLES = \
+	repeat_take \
+	over_array \
+	chain \
+	map \
+	filter \
+	enumerate \
+	minmax
 EXAMPLES_BIN = $(addprefix examples/,$(EXAMPLES))
 
 OBJS = $(patsubst %,build/%.o,$(MODULES))
