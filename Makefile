@@ -1,3 +1,5 @@
+PREFIX = /usr/local
+
 VERSION = 0.0.0
 STATICLIB = libciter.a
 DYLIB = libciter.so
@@ -40,7 +42,7 @@ else
 endif
 
 .PHONY: all
-all: $(STATICLIB) $(SONAME) $(HEADER) examples
+all: $(STATICLIB) $(DYLIB).$(VERSION) $(HEADER) examples
 
 .PHONY: examples
 examples: $(EXAMPLES_BIN)
@@ -69,9 +71,6 @@ $(EXAMPLES_BIN): examples/%: examples/%.c $(STATICLIB)
 $(HEADER): $(patsubst %,src/%.h,$(MODULES))
 	sed '/^#include "[^"][^"]*"$$/d' $^ > $@
 
-$(SONAME): $(DYLIB).$(VERSION)
-	ln -sf $< $@
-
 $(DYLIB).$(VERSION): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) -shared $(LDLIBS)
 
@@ -79,3 +78,21 @@ $(DYLIB).$(VERSION): $(OBJS)
 ifeq ($(shell uname -s),Linux)
 $(DYLIB).$(VERSION): LDFLAGS += -Wl,-soname,$(SONAME)
 endif
+
+.PHONY: install
+install: all
+	install -D -m 644 $(HEADER) $(DESTDIR)$(PREFIX)/include/$(HEADER)
+	install -D -m 644 $(STATICLIB) $(DESTDIR)$(PREFIX)/lib/$(STATICLIB)
+	install -D -m 755 $(DYLIB).$(VERSION) $(DESTDIR)$(PREFIX)/lib/$(DYLIB).$(VERSION)
+	ln -sf $(DYLIB).$(VERSION) $(DESTDIR)$(PREFIX)/lib/$(SONAME)
+	ln -sf $(DYLIB).$(VERSION) $(DESTDIR)$(PREFIX)/lib/$(DYLIB)
+	if command -v ldconfig >/dev/null 2>&1; then ldconfig; fi
+
+.PHONY: uninstall
+uninstall:
+	rm -f $(DESTDIR)$(PREFIX)/include/$(HEADER) \
+		$(DESTDIR)$(PREFIX)/lib/$(STATICLIB) \
+		$(DESTDIR)$(PREFIX)/lib/$(DYLIB).$(VERSION) \
+		$(DESTDIR)$(PREFIX)/lib/$(SONAME) \
+		$(DESTDIR)$(PREFIX)/lib/$(DYLIB)
+	if command -v ldconfig >/dev/null 2>&1; then ldconfig; fi
