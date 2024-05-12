@@ -31,6 +31,9 @@ The former is a static library, while the latter is dynamically linked.
 To link against the dynamic library once it has been installed, add `-lciter` to your compiler/linker flags (usually `LDLIBS`).
 To link against the static library, add `-l:libciter.a`, and specify the directory the library is in using `-L/path/to/libraries`.
 
+See [Programming with CIter](#programming-with-citer) for more information on how to use CIter.
+Also see the examples in the `examples/` directory for simple demonstrations of CIter's features.
+
 ## Getting CIter
 
 Currently, CIter must be built from sources.
