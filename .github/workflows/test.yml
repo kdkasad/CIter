@@ -1,5 +1,3 @@
-#!/bin/bash
-
 #
 # CIter - C library for lazily-evaluated iterators.
 # Copyright (C) 2024  Kian Kasad <kian@kasad.com>
@@ -18,21 +16,33 @@
 # with CIter. If not, see <https://www.gnu.org/licenses/>.
 #
 
-set -e
+name: Build & test
 
-cd $(dirname "$0")
+on:
+  push:
+    paths:
+      - "src/**"
+      - "examples/**"
+      - "Makefile"
+      - ".github/workflows/test.yml"
+  pull_request:
+    branches:
+      - master
+      - "release/*"
 
-run() {
-    printf '%s\n' "$*"
-    "$@"
-    echo
-}
+env:
+  MAKEFLAGS: -j
 
-run ./repeat_take item 7
-run ./over_array a bb ccc dddd
-run ./chain a 3 b 4
-run ./enumerate a b c d
-run ./map 1 2 3 4
-run ./chunked 3 {1..20}
-run ./filter 2 1 2 3 4 5 6 7 8 9 10
-run ./minmax {1..50}
+jobs:
+  test:
+    name: Build & test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out sources
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: make
+
+      - name: Test
+        run: ./examples/run_all.sh
