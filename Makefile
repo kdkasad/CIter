@@ -1,13 +1,16 @@
+VERSION = 0.0.0
 MODULES = iterator repeat take over_array chain map filters enumerate
 STATICLIB = citer.a
+DYLIB = libciter.so
 HEADER = citer.h
 
 EXAMPLES = repeat_take over_array chain map filter enumerate minmax
 EXAMPLES_BIN = $(addprefix examples/,$(EXAMPLES))
 
 OBJS = $(patsubst %,build/%.o,$(MODULES))
+SONAME = $(DYLIB).$(firstword $(subst ., ,$(VERSION)))
 
-CFLAGS = -Wall -Werror -std=c99
+CFLAGS = -Wall -Werror -std=c99 -fPIC
 CPPFLAGS = -I.
 
 ifneq ($(DBG),)
@@ -19,14 +22,14 @@ else
 endif
 
 .PHONY: all
-all: $(STATICLIB) examples
+all: $(STATICLIB) $(SONAME) $(HEADER) examples
 
 .PHONY: examples
 examples: $(EXAMPLES_BIN)
 
 .PHONY: clean
 clean: | clean-examples
-	rm -f $(OBJS) $(STATICLIB) $(HEADER)
+	rm -f $(OBJS) $(STATICLIB) $(HEADER) $(DYLIB) $(DYLIB).$(VERSION) $(SONAME)
 	rm -fd build
 
 .PHONY: clean-examples
@@ -47,3 +50,9 @@ $(EXAMPLES_BIN): examples/%: examples/%.c $(STATICLIB)
 
 $(HEADER): $(patsubst %,src/%.h,$(MODULES))
 	sed '/^#include "[^"][^"]*"$$/d' $^ > $@
+
+$(SONAME): $(DYLIB).$(VERSION)
+	ln -sf $< $@
+
+$(DYLIB).$(VERSION): $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) -shared $(LDLIBS)

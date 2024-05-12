@@ -2,6 +2,10 @@ citer.h
 *.a
 *.o
 /build/
+*.so
+*.so.?
+*.so.?.?
+*.so.?.?.?
 
 /examples/*
 !/examples/*.c
