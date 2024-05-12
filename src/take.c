@@ -61,3 +61,11 @@ iterator_t *citer_skip(iterator_t *original, size_t count) {
 	};
 	return it;
 }
+
+void *citer_nth(iterator_t *it, size_t n) {
+	while (n) {
+		citer_next(it);
+		n--;
+	}
+	return citer_next(it);
+}
