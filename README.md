@@ -20,8 +20,8 @@
 
 # CIter: Lazily-evaluated iterators for C
 
-Inspired by Rust, this library attempts to implement lazily-evaluated iterators
-in C.
+Inspired by [Rust](https://doc.rust-lang.org/std/iter/index.html),
+this library attempts to implement lazily-evaluated iterators in C.
 
 ## Usage
 
