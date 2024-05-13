@@ -61,10 +61,10 @@ iterator_t *citer_flat_map(iterator_t *orig, citer_flat_map_fn_t fn) {
     return citer_flatten(citer_map(orig, (citer_map_fn_t) fn));
 }
 
-/* FIXME: Make flatten double-ended */
 typedef struct citer_flatten_data {
     iterator_t *orig;
     iterator_t *cur;
+    iterator_t *cur_back;
 } citer_flatten_data_t;
 
 void *citer_flatten_next(void *_data) {
@@ -72,14 +72,42 @@ void *citer_flatten_next(void *_data) {
     void *item = NULL;
     while (!item) {
         if (data->cur) {
-            void *item = citer_next(data->cur);
+            item = citer_next(data->cur);
             if (!item) {
                 citer_free(data->cur);
                 data->cur = NULL;
             }
-        }
-        if (!data->cur) {
+        } else {
             data->cur = citer_next(data->orig);
+            if (!data->cur) {
+                if (data->cur_back)
+                    data->cur = data->cur_back;
+                else
+                    break;
+            }
+        }
+    }
+    return item;
+}
+
+void *citer_flatten_next_back(void *_data) {
+    citer_flatten_data_t *data = (citer_flatten_data_t *) _data;
+    void *item = NULL;
+    while (!item) {
+        if (data->cur_back) {
+            item = citer_next_back(data->cur_back);
+            if (!item) {
+                citer_free(data->cur_back);
+                data->cur_back = NULL;
+            }
+        } else {
+            data->cur_back = citer_next_back(data->orig);
+            if (!data->cur_back) {
+                if (data->cur)
+                    data->cur_back = data->cur;
+                else
+                    break;
+            }
         }
     }
     return item;
@@ -89,6 +117,8 @@ void citer_flatten_free_data(void *_data) {
     citer_flatten_data_t *data = (citer_flatten_data_t *) _data;
     if (data->cur)
         citer_free(data->cur);
+    if (data->cur_back && (data->cur_back != data->cur))
+        citer_free(data->cur_back);
     citer_free(data->orig);
     free(data);
 }
@@ -103,7 +133,7 @@ iterator_t *citer_flatten(iterator_t *orig) {
     *it = (iterator_t) {
         .data = data,
         .next = citer_flatten_next,
-        .next_back = NULL,
+        .next_back = citer_is_double_ended(orig) ? citer_flatten_next_back : NULL,
         .free_data = citer_flatten_free_data,
     };
     return it;
