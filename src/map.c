@@ -99,3 +99,24 @@ iterator_t *citer_flatten(iterator_t *orig) {
     };
     return it;
 }
+
+/*
+ * Process an iterator by applying an accumulator function to each item.
+ *
+ * The result of the accumulator function is passed as the first argument the
+ * next time it is called.
+ *
+ * The third argument to citer_fold() is the initial value for the accumulated
+ * data, i.e. what should be passed as the first argument to the accumulator on
+ * its first call.
+ *
+ * This function returns the value returned by the last call to the accumulator.
+ * The input iterator will be consumed but will not be freed.
+ */
+void *citer_fold(iterator_t *it, citer_accumulator_fn_t fn, void *data) {
+    void *item;
+    while ((item = citer_next(it))) {
+        data = fn(data, item);
+    }
+    return data;
+}

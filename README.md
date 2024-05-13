@@ -154,6 +154,7 @@ All iterators and functions below are prefixed with the name `citer_` to avoid c
 | collect_into_linked_list | Collects the items of an iterator into a linked list.                                 |
 | count      | Counts the number of items in an iterator.                                            |
 | find       | Returns the first item of an iterator satisfying a given predicate function.          |
+| fold       | Accumulate all items of an iterator into a single value using a given function.       |
 | free       | Frees (de-allocates) an iterator and its associated data.                             |
 | free_data  | Frees the data associated with an iterator, but not the iterator structure itself.    |
 | max        | Returns the maximum item of an iterator, comparing using a given comparison function. |
