@@ -139,8 +139,8 @@ because the 5th was already returned by a call to `citer_next_back()`.
 
 An iterator is very easy to implement.
 Take a look in any of the files in the `src/` directory to see how they are implemented.
-`repeat.c` is especially simple, and `map.c` is a good example of a very powerful iterator
-which still doesn't require much code.
+`repeat.c` is especially simple,
+and `citer_map()` in `map.c` is a good example of a very powerful iterator which still doesn't require much code.
 
 The `iterator_t` type is defined as follows:
 ```c
