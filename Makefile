@@ -53,7 +53,8 @@ EXAMPLES = \
 	sum \
 	inspect \
 	skip_take_while \
-	zip
+	zip \
+	over_array_back
 EXAMPLES_BIN = $(addprefix examples/,$(EXAMPLES))
 
 STATICLIB = lib$(NAME).a
