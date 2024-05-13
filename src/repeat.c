@@ -38,3 +38,32 @@ iterator_t *citer_repeat(void *item) {
 	};
 	return it;
 }
+
+/* We must use a struct so we can change the value of the item pointer from the
+ * next(_back)? function. */
+typedef struct citer_once_data {
+	void *item;
+} citer_once_data_t;
+
+static void *citer_once_next(void *_data) {
+	citer_once_data_t *data = (citer_once_data_t *) _data;
+	void *item = NULL;
+	if (data->item) {
+		item = data->item;
+		data->item = NULL;
+	}
+	return item;
+}
+
+iterator_t *citer_once(void *item) {
+	citer_once_data_t *data = malloc(sizeof(*data));
+	data->item = item;
+	iterator_t *it = malloc(sizeof(*it));
+	*it = (iterator_t) {
+		.data = data,
+		.next = citer_once_next,
+		.next_back = citer_once_next,
+		.free_data = free,
+	};
+	return it;
+}

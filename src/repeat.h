@@ -31,6 +31,6 @@ iterator_t *citer_repeat(void *);
  *
  * The returned iterator must be freed after use with citer_free().
  */
-#define citer_once(item) citer_take(citer_repeat(item), 1)
+iterator_t *citer_once(void *);
 
 #endif /* _CITER_REPEAT_H_ */
