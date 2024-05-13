@@ -58,6 +58,16 @@ typedef struct iterator_t {
 } iterator_t;
 
 /*
+ * Create a new iterator.
+ */
+void *citer_new(
+	void *data,
+	citer_next_fn next,
+	citer_next_fn next_back,
+	citer_free_data_fn free_data
+);
+
+/*
  * Get the next item from an iterator.
  */
 void *citer_next(iterator_t *);

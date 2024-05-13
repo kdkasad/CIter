@@ -17,6 +17,7 @@
  */
 
 #include "chain.h"
+#include "src/iterator.h"
 
 #include <stdlib.h>
 
@@ -57,17 +58,10 @@ iterator_t *citer_chain(iterator_t *first, iterator_t *second) {
 		.first = first,
 		.second = second,
 	};
-	iterator_t *it = malloc(sizeof(*it));
-	*it = (iterator_t) {
-		.data = data,
-		.next = citer_chain_next,
-		.next_back = NULL,
-		.free_data = citer_chain_free_data,
-	};
-
-	/* Make chain double-ended if both inputs are. */
-	if (first->next_back && second->next_back)
-		it->next_back = citer_chain_next_back;
-
-	return it;
+	return citer_new(
+		data,
+		citer_chain_next,
+		(citer_is_double_ended(first) && citer_is_double_ended(second)) ? citer_chain_next_back : NULL,
+		citer_chain_free_data
+	);
 }

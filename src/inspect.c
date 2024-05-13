@@ -53,12 +53,10 @@ iterator_t *citer_inspect(iterator_t *orig, citer_inspect_fn_t fn, void *fn_data
         .fn = fn,
         .fn_data = fn_data,
     };
-    iterator_t *it = malloc(sizeof(*it));
-    *it = (iterator_t) {
-        .data = data,
-        .next = citer_inspect_next,
-        .next_back = citer_is_double_ended(orig) ? citer_inspect_next_back : NULL,
-        .free_data = citer_inspect_free_data
-    };
-    return it;
+    return citer_new(
+        data,
+        citer_inspect_next,
+        citer_is_double_ended(orig) ? citer_inspect_next_back : NULL,
+        citer_inspect_free_data
+    );
 }

@@ -29,14 +29,12 @@ static void citer_repeat_free_data(void *data) {
 }
 
 iterator_t *citer_repeat(void *item) {
-	iterator_t *it = malloc(sizeof(*it));
-	*it = (iterator_t) {
-		.data = item,
-		.next = citer_repeat_next,
-		.next_back = citer_repeat_next,
-		.free_data = citer_repeat_free_data,
-	};
-	return it;
+	return citer_new(
+		item,
+		citer_repeat_next,
+		citer_repeat_next,
+		citer_repeat_free_data
+	);
 }
 
 /* We must use a struct so we can change the value of the item pointer from the
@@ -58,12 +56,10 @@ static void *citer_once_next(void *_data) {
 iterator_t *citer_once(void *item) {
 	citer_once_data_t *data = malloc(sizeof(*data));
 	data->item = item;
-	iterator_t *it = malloc(sizeof(*it));
-	*it = (iterator_t) {
-		.data = data,
-		.next = citer_once_next,
-		.next_back = citer_once_next,
-		.free_data = free,
-	};
-	return it;
+	return citer_new(
+		data,
+		citer_once_next,
+		citer_once_next,
+		free
+	);
 }

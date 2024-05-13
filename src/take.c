@@ -50,14 +50,12 @@ iterator_t *citer_take(iterator_t *original, size_t count) {
 		.original = original,
 		.count = count,
 	};
-	iterator_t *it = malloc(sizeof(*it));
-	*it = (iterator_t) {
-		.data = data,
-		.next = citer_take_next,
-        .next_back = NULL,
-		.free_data = citer_take_free_data,
-	};
-	return it;
+	return citer_new(
+		data,
+		citer_take_next,
+        NULL,
+		citer_take_free_data
+	);
 }
 
 static void *citer_skip_next(void *_data) {
@@ -88,14 +86,12 @@ iterator_t *citer_skip(iterator_t *original, size_t count) {
 		.original = original,
 		.count = count,
 	};
-	iterator_t *it = malloc(sizeof(*it));
-	*it = (iterator_t) {
-		.data = data,
-		.next = citer_skip_next,
-        .next_back = citer_is_double_ended(original) ? citer_skip_next_back : NULL,
-		.free_data = citer_take_free_data,
-	};
-	return it;
+	return citer_new(
+		data,
+		citer_skip_next,
+        citer_is_double_ended(original) ? citer_skip_next_back : NULL,
+		citer_take_free_data
+	);
 }
 
 void *citer_nth(iterator_t *it, size_t n) {
@@ -154,14 +150,12 @@ iterator_t *citer_take_while(iterator_t *orig, citer_predicate_t predicate, void
 		.extra_data = extra_data,
 		.done = 0,
 	};
-	iterator_t *it = malloc(sizeof(*it));
-	*it = (iterator_t) {
-		.data = data,
-		.next = citer_take_while_next,
-        .next_back = NULL,
-		.free_data = citer_take_while_free_data,
-	};
-	return it;
+	return citer_new(
+		data,
+		citer_take_while_next,
+        NULL,
+		citer_take_while_free_data
+	);
 }
 
 static void *citer_skip_while_next(void *_data) {
@@ -188,12 +182,10 @@ iterator_t *citer_skip_while(iterator_t *orig, citer_predicate_t predicate, void
 		.extra_data = extra_data,
 		.done = 0,
 	};
-	iterator_t *it = malloc(sizeof(*it));
-	*it = (iterator_t) {
-		.data = data,
-		.next = citer_skip_while_next,
-        .next_back = NULL,
-		.free_data = citer_take_while_free_data,
-	};
-	return it;
+	return citer_new(
+		data,
+		citer_skip_while_next,
+        NULL,
+		citer_take_free_data
+	);
 }

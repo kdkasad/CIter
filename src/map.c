@@ -47,14 +47,12 @@ static void citer_map_free_data(void *_data) {
 iterator_t *citer_map(iterator_t *orig, citer_map_fn_t fn) {
     citer_map_data_t *data = malloc(sizeof(*data));
     *data = (citer_map_data_t) { .orig = orig, .fn = fn };
-    iterator_t *it = malloc(sizeof(*it));
-    *it = (iterator_t) {
-        .data = data,
-        .next = citer_map_next,
-        .next_back = citer_is_double_ended(orig) ? citer_map_next_back : NULL,
-        .free_data = citer_map_free_data
-    };
-    return it;
+    return citer_new(
+        data,
+        citer_map_next,
+        citer_is_double_ended(orig) ? citer_map_next_back : NULL,
+        citer_map_free_data
+    );
 }
 
 typedef struct citer_flatten_data {
@@ -125,14 +123,12 @@ iterator_t *citer_flatten(iterator_t *orig) {
         .orig = orig,
         .cur = NULL,
     };
-    iterator_t *it = malloc(sizeof(*it));
-    *it = (iterator_t) {
-        .data = data,
-        .next = citer_flatten_next,
-        .next_back = citer_is_double_ended(orig) ? citer_flatten_next_back : NULL,
-        .free_data = citer_flatten_free_data,
-    };
-    return it;
+    return citer_new(
+        data,
+        citer_flatten_next,
+        citer_is_double_ended(orig) ? citer_flatten_next_back : NULL,
+        citer_flatten_free_data
+    );
 }
 
 /*

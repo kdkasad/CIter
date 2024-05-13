@@ -60,12 +60,10 @@ iterator_t *citer_over_array(void *array, size_t itemsize, size_t len) {
 		.i = 0,
 	};
 
-	iterator_t *it = malloc(sizeof(*it));
-	*it = (iterator_t) {
-		.data = data,
-		.next = citer_over_array_next,
-        .next_back = citer_over_array_next_back,
-		.free_data = citer_over_array_free_data,
-	};
-	return it;
+	return citer_new(
+		data,
+		citer_over_array_next,
+		citer_over_array_next_back,
+		citer_over_array_free_data
+	);
 }

@@ -22,6 +22,25 @@
 #include <stdlib.h>
 
 /*
+ * Create a new iterator.
+ */
+void *citer_new(
+	void *data,
+	citer_next_fn next,
+	citer_next_fn next_back,
+	citer_free_data_fn free_data
+) {
+	iterator_t *it = malloc(sizeof((*it)));
+	*it = (iterator_t) {
+		.data = data,
+		.next = next,
+		.next_back = next_back,
+		.free_data = free_data,
+	};
+	return it;
+}
+
+/*
  * Get the next item from an iterator_t.
  */
 void *citer_next(iterator_t *it) {

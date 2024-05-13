@@ -26,12 +26,10 @@ iterator_t *citer_reverse(iterator_t *orig) {
 
     /* Since we don't need to store extra data, we can just use the iterator as
      * the data and use the normal next, next_back, and free functions. */
-    iterator_t *it = malloc(sizeof(*it));
-    *it = (iterator_t) {
-        .data = orig,
-        .next = (citer_next_fn) citer_next_back,
-        .next_back = (citer_next_fn) citer_next,
-        .free_data = (citer_free_data_fn) citer_free,
-    };
-    return it;
+     return citer_new(
+        orig,
+        (citer_next_fn) citer_next_back,
+        (citer_next_fn) citer_next,
+        (citer_free_data_fn) citer_free
+     );
 }

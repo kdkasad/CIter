@@ -106,12 +106,10 @@ iterator_t *citer_filter(iterator_t *orig, citer_predicate_t predicate, void *ex
         .predicate = predicate,
         .predicate_data = extra_data,
     };
-    iterator_t *it = malloc(sizeof(*it));
-    *it = (iterator_t) {
-        .data = data,
-        .next = citer_filter_next,
-        .next_back = citer_is_double_ended(orig) ? citer_filter_next_back : NULL,
-        .free_data = citer_filter_free_data,
-    };
-    return it;
+    return citer_new(
+        data,
+        citer_filter_next,
+        citer_is_double_ended(orig) ? citer_filter_next_back : NULL,
+        citer_filter_free_data
+    );
 }
