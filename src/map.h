@@ -38,7 +38,8 @@ typedef iterator_t *(*citer_flat_map_fn_t)(void *);
 typedef void *(*citer_accumulator_fn_t)(void *data, void *item);
 
 iterator_t *citer_map(iterator_t *, citer_map_fn_t);
-iterator_t *citer_flat_map(iterator_t *, citer_flat_map_fn_t);
+
+#define citer_flat_map(it, fn) citer_flatten(citer_map((it), (fn)))
 
 /*
  * Flatten an iterator over iterators.

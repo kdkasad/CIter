@@ -136,7 +136,7 @@ All iterators and functions below are prefixed with the name `citer_` to avoid c
 | chunked    | Iterates over N-item chunks of an iterator at a time.                                                               |
 | enumerate  | Enumerates the items of an iterator. Each new item is a `citer_enumerate_item_t` containing the index and the item. |
 | filter     | Filters items of an iterator using a predicate function.                                                            |
-| flat_map   | Maps each item of an iterator to an iterator, then iterates over the items of each result iterator consecutively.   |
+| flat_map   | Maps each item of an iterator to an iterator, then iterates over the items of each result iterator consecutively. Equivalent to `citer_flatten(citer_map(it, fn))`. |
 | flatten    | Flattens an iterator of iterators into a single iterator.                                                           |
 | inspect    | Calls a callback function on each item of an iterator, without modifying the returned items.                        |
 | map        | Maps each item of an iterator using a callback function.                                                            |
