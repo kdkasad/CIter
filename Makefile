@@ -29,12 +29,12 @@ LICENSE_HEADER_LENGTH = 18
 # modules which use it.
 MODULES = \
 	iterator \
+	filters \
 	repeat \
 	take \
 	over_array \
 	chain \
 	map \
-	filters \
 	enumerate \
 	chunked \
 	collect
