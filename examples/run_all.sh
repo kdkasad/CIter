@@ -41,4 +41,4 @@ run ./count_using_fold {a..z}
 run ./sum {1..5}
 run ./inspect {1..5}
 run ./skip_take_while {1..100}
-run ./over_array_back {a..f}
+run ./reverse {a..f}

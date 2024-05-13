@@ -26,11 +26,11 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-	iterator_t *it = citer_over_array((void **) argv + 1, sizeof(*argv), argc - 1);
+	iterator_t *it = citer_reverse(citer_over_array((void **) argv + 1, sizeof(*argv), argc - 1));
 
 	char **itemptr;
 	unsigned long count = 0;
-	while ((itemptr = (char **) citer_next_back(it))) {
+	while ((itemptr = (char **) citer_next(it))) {
 		printf("Got: %s\n", *itemptr);
 		count++;
 	}
