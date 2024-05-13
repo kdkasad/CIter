@@ -37,7 +37,8 @@ static void *citer_chain_next(void *_data) {
 static void citer_chain_free_data(void *_data) {
 	citer_chain_data_t *data = (citer_chain_data_t *) _data;
 	citer_free(data->first);
-	citer_free(data->second);
+	if (data->first != data->second)
+		citer_free(data->second);
 	free(data);
 }
 
