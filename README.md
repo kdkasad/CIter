@@ -43,7 +43,7 @@ Don't worry though; it's easy!
 
 Simply run `make` in the root directory of the repository.
 
-This will build three notable files: `citer.h`, `libciter.a`, and `libciter.so.0.0.0`.
+This will build three notable files: `citer.h`, `libciter.a`, and `libciter.so.0.1.0`.
 
 The examples in the `examples/` directory will also be built.
 Those can be run to test CIter's features.
@@ -60,8 +60,8 @@ To install to a different location, run `make PREFIX=/path/to/install/into insta
 Running `make install` will:
  - install `citer.h` as `$(PREFIX)/include/citer.h`;
  - install `libciter.a` as `$(PREFIX)/lib/libciter.a`;
- - install `libciter.so.0.0.0` as `$(PREFIX)/lib/libciter.so.0.0.0`;
- - create symbolic links `libciter.so` and `libciter.so.0` to `libciter.so.0.0.0` in `$(PREFIX)/lib`.
+ - install `libciter.so.0.1.0` as `$(PREFIX)/lib/libciter.so.0.1.0`;
+ - create symbolic links `libciter.so` and `libciter.so.0` to `libciter.so.0.1.0` in `$(PREFIX)/lib`.
 
 ### Uninstalling
 
@@ -136,10 +136,11 @@ All iterators and functions below are prefixed with the name `citer_` to avoid c
 | chunked    | Iterates over N-item chunks of an iterator at a time.                                                               |
 | enumerate  | Enumerates the items of an iterator. Each new item is a `citer_enumerate_item_t` containing the index and the item. |
 | filter     | Filters items of an iterator using a predicate function.                                                            |
-| flat_map   | Maps each item of an iterator to an iterator, then iterates over the items of each result iterator consecutively.   |
+| flat_map   | Maps each item of an iterator to an iterator, then iterates over the items of each result iterator consecutively. Equivalent to `citer_flatten(citer_map(it, fn))`. |
 | flatten    | Flattens an iterator of iterators into a single iterator.                                                           |
 | inspect    | Calls a callback function on each item of an iterator, without modifying the returned items.                        |
 | map        | Maps each item of an iterator using a callback function.                                                            |
+| once       | Iterator which returns a given item once. Equivalent to `citer_take(citer_repeat(item), 1)`.                        |
 | over_array | Iterates over the items in an array. Returns a pointer to each item in the array as the item.                       |
 | repeat     | Iterator which repeatedly returns the same item.                                                                    |
 | skip       | Skips the first N items of another iterator.                                                                        |

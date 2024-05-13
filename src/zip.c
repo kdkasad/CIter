@@ -44,10 +44,9 @@ static void *citer_zip_next(void *_data) {
 
 static void citer_zip_free_data(void *_data) {
 	citer_zip_data_t *data = (citer_zip_data_t *) _data;
-	/* FIXME: Don't double-free if first == second */
-	/* FIXME: This same problem in other places, e.g. chain */
 	citer_free(data->first);
-	citer_free(data->second);
+	if (data->first != data->second)
+		citer_free(data->second);
 	free(data);
 }
 

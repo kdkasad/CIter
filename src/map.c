@@ -57,10 +57,6 @@ iterator_t *citer_map(iterator_t *orig, citer_map_fn_t fn) {
     return it;
 }
 
-iterator_t *citer_flat_map(iterator_t *orig, citer_flat_map_fn_t fn) {
-    return citer_flatten(citer_map(orig, (citer_map_fn_t) fn));
-}
-
 typedef struct citer_flatten_data {
     iterator_t *orig;
     iterator_t *cur;

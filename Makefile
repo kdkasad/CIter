@@ -19,7 +19,7 @@
 PREFIX = /usr/local
 
 NAME = citer
-VERSION = 0.0.0
+VERSION = 0.1.0
 LICENSE_HEADER_LENGTH = 18
 
 # Order matters here. The "iterator" module must come first, so that when
@@ -133,3 +133,7 @@ uninstall:
 		$(DESTDIR)$(PREFIX)/lib/$(SONAME) \
 		$(DESTDIR)$(PREFIX)/lib/$(DYLIB)
 	if command -v ldconfig >/dev/null 2>&1; then ldconfig; fi
+
+.PHONY: check
+check: $(EXAMPLES_BIN)
+	./examples/run_all.sh

@@ -23,4 +23,14 @@
 
 iterator_t *citer_repeat(void *);
 
+/*
+ * Create an iterator that yields a single item.
+ *
+ * Parameters:
+ *   item - The item to yield.
+ *
+ * The returned iterator must be freed after use with citer_free().
+ */
+#define citer_once(item) citer_take(citer_repeat(item), 1)
+
 #endif /* _CITER_REPEAT_H_ */
