@@ -59,6 +59,14 @@ void *citer_min(iterator_t *it, citer_cmp_fn_t cmp, void *extra_data) {
     return min;
 }
 
+void *citer_find(iterator_t *it, citer_predicate_t predicate, void *extra_data) {
+    for (;;) {
+        void *item = citer_next(it);
+        if (!item || predicate(item, extra_data))
+            return item;
+    }
+}
+
 typedef struct citer_filter_data {
     iterator_t *orig;
     citer_predicate_t predicate;
