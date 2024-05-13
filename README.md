@@ -143,6 +143,7 @@ All iterators and functions below are prefixed with the name `citer_` to avoid c
 | over_array | Iterates over the items in an array. Returns a pointer to each item in the array as the item.                       |
 | repeat     | Iterator which repeatedly returns the same item.                                                                    |
 | skip       | Skips the first N items of another iterator.                                                                        |
+| skip_while | Skips the items of another iterator until a given predicate function returns false.                                 |
 | take       | Iterates over the first N items of another iterator.                                                                |
 | take_while | Iterates over items of another iterator until a given predicate function returns false.                             |
 

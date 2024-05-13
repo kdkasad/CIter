@@ -38,4 +38,15 @@ void *citer_nth(iterator_t *, size_t);
  */
 iterator_t *citer_take_while(iterator_t *, citer_predicate_t, void *);
 
+/*
+ * Skip elements from the iterator while the predicate is true.
+ *
+ * This is like citer_skip(), but uses a predicate to determine when to stop
+ * rather than a fixed number of elements.
+ *
+ * The returned iterator must be freed with citer_free(). When this iterator is
+ * freed, the original iterator is also freed.
+ */
+iterator_t *citer_skip_while(iterator_t *, citer_predicate_t, void *);
+
 #endif /* _CITER_TAKE_H_ */

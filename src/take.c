@@ -17,6 +17,7 @@
  */
 
 #include "take.h"
+#include "src/iterator.h"
 
 #include <stdlib.h>
 
@@ -128,6 +129,39 @@ iterator_t *citer_take_while(iterator_t *orig, citer_predicate_t predicate, void
 	*it = (iterator_t) {
 		.data = data,
 		.next = citer_take_while_next,
+		.free_data = citer_take_while_free_data,
+	};
+	return it;
+}
+
+static void *citer_skip_while_next(void *_data) {
+	citer_take_while_data_t *data = (citer_take_while_data_t *) _data;
+
+	if (data->done)
+		return citer_next(data->orig);
+
+	void *item;
+	while ((item = citer_next(data->orig))) {
+		if (!data->predicate(item, data->extra_data)) {
+			data->done = 1;
+			return item;
+		}
+	}
+	return NULL;
+}
+
+iterator_t *citer_skip_while(iterator_t *orig, citer_predicate_t predicate, void *extra_data) {
+	citer_take_while_data_t *data = malloc(sizeof(*data));
+	*data = (citer_take_while_data_t) {
+		.orig = orig,
+		.predicate = predicate,
+		.extra_data = extra_data,
+		.done = 0,
+	};
+	iterator_t *it = malloc(sizeof(*it));
+	*it = (iterator_t) {
+		.data = data,
+		.next = citer_skip_while_next,
 		.free_data = citer_take_while_free_data,
 	};
 	return it;
