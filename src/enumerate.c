@@ -54,6 +54,7 @@ iterator_t *citer_enumerate(iterator_t *orig) {
     *it = (iterator_t) {
         .data = data,
         .next = citer_enumerate_next,
+        .next_back = NULL,
         .free_data = citer_enumerate_free_data,
     };
     return it;

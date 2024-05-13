@@ -54,6 +54,7 @@ iterator_t *citer_over_array(void *array, size_t itemsize, size_t len) {
 	*it = (iterator_t) {
 		.data = data,
 		.next = citer_over_array_next,
+		.next_back = NULL,
 		.free_data = citer_over_array_free_data,
 	};
 	return it;

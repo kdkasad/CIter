@@ -60,6 +60,7 @@ iterator_t *citer_chunked(iterator_t *orig, size_t chunksize) {
     *it = (iterator_t) {
         .data = data,
         .next = citer_chunked_next,
+        .next_back = NULL,
         .free_data = citer_chunked_free_data,
     };
     return it;

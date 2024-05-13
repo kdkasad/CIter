@@ -18,6 +18,7 @@
 
 #include "iterator.h"
 
+#include <stdbool.h>
 #include <stdlib.h>
 
 /*
@@ -25,6 +26,17 @@
  */
 void *citer_next(iterator_t *it) {
 	return it->next(it->data);
+}
+
+/*
+ * Get the next item from the back of a double-ended iterator.
+ */
+void *citer_next_back(iterator_t *it) {
+	if (it->next_back)
+		return it->next_back(it->data);
+	else
+		/* TODO: Notify caller of error. */
+		return NULL;
 }
 
 /*
@@ -41,6 +53,15 @@ void citer_free_data(iterator_t *it) {
 void citer_free(iterator_t *it) {
 	citer_free_data(it);
 	free(it);
+}
+
+/*
+ * Check if an iterator is double-ended.
+ *
+ * Returns true (1) if the iterator is double-ended, false (0) otherwise.
+ */
+bool citer_is_double_ended(iterator_t *it) {
+	return it->next_back != NULL;
 }
 
 /*

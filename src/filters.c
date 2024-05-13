@@ -100,6 +100,7 @@ iterator_t *citer_filter(iterator_t *orig, citer_predicate_t predicate, void *ex
     *it = (iterator_t) {
         .data = data,
         .next = citer_filter_next,
+        .next_back = NULL,
         .free_data = citer_filter_free_data,
     };
     return it;

@@ -29,11 +29,12 @@ static void citer_repeat_free_data(void *data) {
 }
 
 iterator_t *citer_repeat(void *item) {
-	iterator_t *repeat = malloc(sizeof(*repeat));
-	*repeat = (iterator_t) {
+	iterator_t *it = malloc(sizeof(*it));
+	*it = (iterator_t) {
 		.data = item,
 		.next = citer_repeat_next,
+		.next_back = NULL,
 		.free_data = citer_repeat_free_data,
 	};
-	return repeat;
+	return it;
 }

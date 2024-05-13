@@ -45,6 +45,7 @@ iterator_t *citer_map(iterator_t *orig, citer_map_fn_t fn) {
     *it = (iterator_t) {
         .data = data,
         .next = citer_map_next,
+        .next_back = NULL,
         .free_data = citer_map_free_data
     };
     return it;
@@ -95,6 +96,7 @@ iterator_t *citer_flatten(iterator_t *orig) {
     *it = (iterator_t) {
         .data = data,
         .next = citer_flatten_next,
+        .next_back = NULL,
         .free_data = citer_flatten_free_data,
     };
     return it;

@@ -59,6 +59,7 @@ iterator_t *citer_zip(iterator_t *first, iterator_t *second) {
 	*it = (iterator_t) {
 		.data = data,
 		.next = citer_zip_next,
+        .next_back = NULL,
 		.free_data = citer_zip_free_data,
 	};
 	return it;

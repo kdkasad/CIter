@@ -50,6 +50,7 @@ iterator_t *citer_inspect(iterator_t *orig, citer_inspect_fn_t fn, void *fn_data
     *it = (iterator_t) {
         .data = data,
         .next = citer_inspect_next,
+        .next_back = NULL,
         .free_data = citer_inspect_free_data
     };
     return it;

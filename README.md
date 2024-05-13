@@ -161,7 +161,9 @@ All iterators and functions below are prefixed with the name `citer_` to avoid c
 | fold       | Accumulate all items of an iterator into a single value using a given function.       |
 | free       | Frees (de-allocates) an iterator and its associated data.                             |
 | free_data  | Frees the data associated with an iterator, but not the iterator structure itself.    |
+| is_double_ended | Checks if an iterator is double-ended.                                           |
 | max        | Returns the maximum item of an iterator, comparing using a given comparison function. |
 | min        | Returns the minimum item of an iterator, comparing using a given comparison function. |
 | next       | Returns the next item of the iterator.                                                |
+| next_back  | Returns the next item from the back of a double-ended iterator.                       |
 | nth        | Returns the Nth item of an iterator.                                                  |

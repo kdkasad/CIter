@@ -51,6 +51,7 @@ iterator_t *citer_chain(iterator_t *first, iterator_t *second) {
 	*it = (iterator_t) {
 		.data = data,
 		.next = citer_chain_next,
+		.next_back = NULL,
 		.free_data = citer_chain_free_data,
 	};
 	return it;

@@ -52,6 +52,7 @@ iterator_t *citer_take(iterator_t *original, size_t count) {
 	*it = (iterator_t) {
 		.data = data,
 		.next = citer_take_next,
+        .next_back = NULL,
 		.free_data = citer_take_free_data,
 	};
 	return it;
@@ -76,6 +77,7 @@ iterator_t *citer_skip(iterator_t *original, size_t count) {
 	*it = (iterator_t) {
 		.data = data,
 		.next = citer_skip_next,
+        .next_back = NULL,
 		.free_data = citer_take_free_data,
 	};
 	return it;
@@ -129,6 +131,7 @@ iterator_t *citer_take_while(iterator_t *orig, citer_predicate_t predicate, void
 	*it = (iterator_t) {
 		.data = data,
 		.next = citer_take_while_next,
+        .next_back = NULL,
 		.free_data = citer_take_while_free_data,
 	};
 	return it;
@@ -162,6 +165,7 @@ iterator_t *citer_skip_while(iterator_t *orig, citer_predicate_t predicate, void
 	*it = (iterator_t) {
 		.data = data,
 		.next = citer_skip_while_next,
+        .next_back = NULL,
 		.free_data = citer_take_while_free_data,
 	};
 	return it;
