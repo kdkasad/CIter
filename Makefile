@@ -91,8 +91,10 @@ build:
 $(OBJS): build/%.o: src/%.c $(HEADER) | build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 
+$(EXAMPLES_BIN): LDFLAGS += -L.
+$(EXAMPLES_BIN): LDLIBS += -l$(patsubst lib%.a,%,$(STATICLIB))
 $(EXAMPLES_BIN): examples/%: examples/%.c $(STATICLIB)
-	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $< $(STATICLIB) $(LDFLAGS) $(LDLIBS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $< $(LDFLAGS) $(LDLIBS)
 
 $(HEADER): $(patsubst %,src/%.h,$(MODULES))
 	sed '$(LICENSE_HEADER_LENGTH)q' $< > $@
