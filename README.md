@@ -149,6 +149,8 @@ All iterators and functions below are prefixed with the name `citer_` to avoid c
 | ---        | ---                                                                                   |
 | all        | Returns true if all items of an iterator satisfy a given predicate function.          |
 | any        | Returns true if any items of an iterator satisfy a given predicate function.          |
+| collect_into_array       | Collects the items of an iterator into an array.                                      |
+| collect_into_linked_list | Collects the items of an iterator into a linked list.                                 |
 | free       | Frees (de-allocates) an iterator and its associated data.                             |
 | free_data  | Frees the data associated with an iterator, but not the iterator structure itself.    |
 | max        | Returns the maximum item of an iterator, comparing using a given comparison function. |

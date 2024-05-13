@@ -36,3 +36,4 @@ run ./map 1 2 3 4
 run ./chunked 3 {1..20}
 run ./filter 2 1 2 3 4 5 6 7 8 9 10
 run ./minmax {1..50}
+run ./collect item 5
