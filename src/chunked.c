@@ -20,6 +20,8 @@
 
 #include <stdlib.h>
 
+/* TODO: Once size reporting is implemented, make chunked double-ended. */
+
 typedef struct citer_chunked_data {
     iterator_t *orig;
     size_t chunksize;
@@ -36,21 +38,6 @@ static void *citer_chunked_next(void *_data) {
     chunk[0] = first;
     for (size_t i = 1; i < data->chunksize; i++) {
         chunk[i] = citer_next(data->orig);
-    }
-    return chunk;
-}
-
-static void *citer_chunked_next_back(void *_data) {
-    citer_chunked_data_t *data = (citer_chunked_data_t *) _data;
-
-    void *first = citer_next_back(data->orig);
-    if (!first)
-        return NULL;
-
-    void **chunk = malloc(data->chunksize * sizeof(*chunk));
-    chunk[0] = first;
-    for (size_t i = 1; i < data->chunksize; i++) {
-        chunk[i] = citer_next_back(data->orig);
     }
     return chunk;
 }
@@ -75,7 +62,7 @@ iterator_t *citer_chunked(iterator_t *orig, size_t chunksize) {
     *it = (iterator_t) {
         .data = data,
         .next = citer_chunked_next,
-        .next_back = citer_is_double_ended(orig) ? citer_chunked_next_back : NULL,
+        .next_back = NULL,
         .free_data = citer_chunked_free_data,
     };
     return it;
