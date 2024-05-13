@@ -88,13 +88,52 @@ If you don't like this, try Rust.
 Iterators are created using the `citer_<iterator>(...)` functions.
 These functions take parameters as necessary and return a pointer to a heap-allocated iterator.
 
-Going forward, assume `it` is of the type `iterator_t *`, a pointer to an iterator.
-
 To free an iterator, call `citer_free(it)`.
-`citer_free(it)` should not free any memory which was not allocated by `citer_*()` functions.
-This means that if you pass heap-allocated memory to iterator functions, you must free it yourself.
+`citer_free(it)` will not free any memory which was not allocated by `citer_*()` functions.
+This means that if you pass heap-allocated memory to iterator constructor functions, you must free it yourself.
 
 Calling `citer_next(it)` will return the next item in the iterator, or `NULL` if the iterator is exhausted.
+If the iterator is double-ended, `citer_next_back(it)` will return the next item from the back of the iterator.
+
+#### Double-ended iterators
+
+Some iterators can iterate both forwards and backwards.
+These are called double-ended iterators.
+
+The table of iterators below shows which iterators are double-ended.
+To check at runtime if an iterator is double-ended, use `citer_is_double_ended(it)`.
+
+Double-ended iterators should only return each item once.
+In other words, `citer_next(it)` should not return the same item as `citer_next_back(it)`.
+See the example below for a demonstration.
+
+<details>
+<summary>Example</summary>
+
+Here is an example using an iterator over a small array:
+
+    #include <assert.h>
+    #include <stdio.h>
+    #include <citer.h>
+
+    int main() {
+        int arr[] = { 1, 2, 3, 4, 5 };
+        iterator_t *it = citer_over_array(arr, sizeof(int), 5);
+
+        assert(citer_next_back(it) == &arr[4]);
+        assert(citer_next(it) == &arr[0]);
+        assert(citer_next(it) == &arr[1]);
+        assert(citer_next(it) == &arr[2]);
+        assert(citer_next(it) == &arr[3]);
+        assert(citer_next(it) == NULL);
+
+        return 0;
+    }
+
+As you can see, the iterator is exhausted after returning the 4th item,
+because the 5th was already returned by a call to `citer_next_back()`.
+
+</details>
 
 ### Implementing your own iterators
 
@@ -108,14 +147,20 @@ The `iterator_t` type is defined as follows:
 typedef struct iterator_t {
     void *data;
     void *(*next)(void *data);
+    void *(*next_back)(void *data);
     void (*free_data)(void *data);
 } iterator_t;
 ```
 
 The `data` field can be anything you want.
-It is passed to the `next` function and is not used anywhere else (except `free_data()`).
+It is passed to the `next` and `next_back` functions but is not used anywhere else (except `free_data()`).
 
 The `next` function should return the next item of this iterator, or `NULL` if the iterator is exhausted.
+
+The `next_back` function is the same as `next`,
+but should return the next item from the back (i.e. end) of the iterator.
+This is only implemented for double-ended iterators.
+For single-ended iterators, the `next_back` field should be set to `NULL`.
 
 The `free_data` function should deallocate any heap-allocated memory in the `data` field.
 If `data` is a pointer to a struct, and that struct was heap-allocated when the iterator was created,
@@ -130,24 +175,30 @@ All iterators and functions below are prefixed with the name `citer_` to avoid c
 
 ### Iterators
 
-| Iterator   | Description                                                                                                         |
-| ---        | ---                                                                                                                 |
-| chain      | Chains two iterators. Iterates over all items of the first, then all items of the second.                           |
-| chunked    | Iterates over N-item chunks of an iterator at a time.                                                               |
-| enumerate  | Enumerates the items of an iterator. Each new item is a `citer_enumerate_item_t` containing the index and the item. |
-| filter     | Filters items of an iterator using a predicate function.                                                            |
-| flat_map   | Maps each item of an iterator to an iterator, then iterates over the items of each result iterator consecutively. Equivalent to `citer_flatten(citer_map(it, fn))`. |
-| flatten    | Flattens an iterator of iterators into a single iterator.                                                           |
-| inspect    | Calls a callback function on each item of an iterator, without modifying the returned items.                        |
-| map        | Maps each item of an iterator using a callback function.                                                            |
-| once       | Iterator which returns a given item once. Equivalent to `citer_take(citer_repeat(item), 1)`.                        |
-| over_array | Iterates over the items in an array. Returns a pointer to each item in the array as the item.                       |
-| repeat     | Iterator which repeatedly returns the same item.                                                                    |
-| skip       | Skips the first N items of another iterator.                                                                        |
-| skip_while | Skips the items of another iterator until a given predicate function returns false.                                 |
-| take       | Iterates over the first N items of another iterator.                                                                |
-| take_while | Iterates over items of another iterator until a given predicate function returns false.                             |
-| zip        | Zips two iterators together, returning pairs of items, one from each input iterator.                                |
+| Iterator   | Double-ended | Description                                                                                                         |
+| ---        | --- | ---                                                                                                                 |
+| chain      | I | Chains two iterators. Iterates over all items of the first, then all items of the second.                           |
+| chunked    | N | Iterates over N-item chunks of an iterator at a time.                                                               |
+| enumerate  | N | Enumerates the items of an iterator. Each new item is a `citer_enumerate_item_t` containing the index and the item. |
+| filter     | I | Filters items of an iterator using a predicate function.                                                            |
+| flat_map   | I | Maps each item of an iterator to an iterator, then iterates over the items of each result iterator consecutively. Equivalent to `citer_flatten(citer_map(it, fn))`. |
+| flatten    | I | Flattens an iterator of iterators into a single iterator.                                                           |
+| inspect    | I | Calls a callback function on each item of an iterator, without modifying the returned items.                        |
+| map        | I | Maps each item of an iterator using a callback function.                                                            |
+| once       | Y | Iterator which returns a given item once. Equivalent to `citer_take(citer_repeat(item), 1)`.                        |
+| over_array | Y | Iterates over the items in an array. Returns a pointer to each item in the array as the item.                       |
+| repeat     | Y | Iterator which repeatedly returns the same item.                                                                    |
+| reverse    | Y | Iterator which reverses a double-ended iterator.                                                                    |
+| skip       | I | Skips the first N items of another iterator.                                                                        |
+| skip_while | N | Skips the items of another iterator until a given predicate function returns false.                                 |
+| take       | N | Iterates over the first N items of another iterator.                                                                |
+| take_while | N | Iterates over items of another iterator until a given predicate function returns false.                             |
+| zip        | N | Zips two iterators together, returning pairs of items, one from each input iterator.                                |
+
+\*
+Y: Yes,
+N: No,
+I: Inherited (i.e. double-ended if all input iterators are double-ended)
 
 ### Functions
 
