@@ -56,15 +56,6 @@ void citer_free(iterator_t *it) {
 }
 
 /*
- * Check if an iterator is double-ended.
- *
- * Returns true (1) if the iterator is double-ended, false (0) otherwise.
- */
-bool citer_is_double_ended(iterator_t *it) {
-	return it->next_back != NULL;
-}
-
-/*
  * Count the number of items in an iterator.
  *
  * Only works for finite iterators. Calling this function on an infinite

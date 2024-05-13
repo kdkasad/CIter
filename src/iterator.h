@@ -67,7 +67,7 @@ void citer_free(iterator_t *);
  *
  * Returns 1 if the iterator is double-ended, 0 otherwise.
  */
-bool citer_is_double_ended(iterator_t *);
+#define citer_is_double_ended(it) (!!(it)->next_back)
 
 /*
  * Count the number of items in an iterator.
