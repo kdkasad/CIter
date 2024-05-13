@@ -20,9 +20,6 @@
 
 #include <stdlib.h>
 
-typedef void *(*citer_next_fn_t)(void *);
-typedef void (*citer_free_data_fn_t)(void *);
-
 iterator_t *citer_reverse(iterator_t *orig) {
     if (!citer_is_double_ended(orig))
         return NULL;
@@ -32,9 +29,9 @@ iterator_t *citer_reverse(iterator_t *orig) {
     iterator_t *it = malloc(sizeof(*it));
     *it = (iterator_t) {
         .data = orig,
-        .next = (citer_next_fn_t) citer_next_back,
-        .next_back = (citer_next_fn_t) citer_next,
-        .free_data = (citer_free_data_fn_t) citer_free,
+        .next = (citer_next_fn) citer_next_back,
+        .next_back = (citer_next_fn) citer_next,
+        .free_data = (citer_free_data_fn) citer_free,
     };
     return it;
 }

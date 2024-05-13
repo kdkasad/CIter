@@ -23,6 +23,18 @@
 #include <stddef.h>
 
 /*
+ * Function type for getting the next item from an iterator.
+ * Used for both iterator_t::next() and iterator_t::next_back().
+ */
+typedef void *(*citer_next_fn)(void *);
+
+/*
+ * Function type for freeing an iterator's data.
+ * Used for iterator_t::free_data().
+ */
+typedef void (*citer_free_data_fn)(void *);
+
+/*
  * Iterator structure
  *
  * Fields:
@@ -37,9 +49,9 @@
  */
 typedef struct iterator_t {
 	void *data;
-	void *(*next)(void *data);
-	void *(*next_back)(void *data);
-	void (*free_data)(void *data);
+	citer_next_fn next;
+	citer_next_fn next_back;
+	citer_free_data_fn free_data;
 } iterator_t;
 
 /*

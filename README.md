@@ -144,11 +144,14 @@ which still doesn't require much code.
 
 The `iterator_t` type is defined as follows:
 ```c
+typedef void *(*citer_next_fn)(void *);
+typedef void (*citer_free_data_fn)(void *);
+
 typedef struct iterator_t {
     void *data;
-    void *(*next)(void *data);
-    void *(*next_back)(void *data);
-    void (*free_data)(void *data);
+	citer_next_fn next;
+	citer_next_fn next_back;
+	citer_free_data_fn free_data;
 } iterator_t;
 ```
 
