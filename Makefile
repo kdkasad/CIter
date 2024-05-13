@@ -37,7 +37,8 @@ MODULES = \
 	map \
 	enumerate \
 	chunked \
-	collect
+	collect \
+	inspect
 
 EXAMPLES = \
 	repeat_take \
@@ -50,7 +51,8 @@ EXAMPLES = \
 	chunked \
 	collect \
 	count_using_fold \
-	sum
+	sum \
+	inspect
 EXAMPLES_BIN = $(addprefix examples/,$(EXAMPLES))
 
 OBJS = $(patsubst %,build/%.o,$(MODULES))

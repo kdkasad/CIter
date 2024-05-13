@@ -39,3 +39,4 @@ run ./minmax {1..50}
 run ./collect item 5
 run ./count_using_fold {a..z}
 run ./sum {1..5}
+run ./inspect {1..5}
