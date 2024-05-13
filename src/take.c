@@ -87,3 +87,48 @@ void *citer_nth(iterator_t *it, size_t n) {
 	}
 	return citer_next(it);
 }
+
+typedef struct citer_take_while_data {
+	iterator_t *orig;
+	citer_predicate_t predicate;
+	void *extra_data;
+	unsigned char done;
+} citer_take_while_data_t;
+
+static void *citer_take_while_next(void *_data) {
+	citer_take_while_data_t *data = (citer_take_while_data_t *) _data;
+
+	if (data->done)
+		return NULL;
+
+	void *item = citer_next(data->orig);
+	if (data->predicate(item, data->extra_data)) {
+		return item;
+	} else {
+		data->done = 1;
+		return NULL;
+	}
+}
+
+static void citer_take_while_free_data(void *_data) {
+	citer_take_while_data_t *data = (citer_take_while_data_t *) _data;
+	citer_free(data->orig);
+	free(data);
+}
+
+iterator_t *citer_take_while(iterator_t *orig, citer_predicate_t predicate, void *extra_data) {
+	citer_take_while_data_t *data = malloc(sizeof(*data));
+	*data = (citer_take_while_data_t) {
+		.orig = orig,
+		.predicate = predicate,
+		.extra_data = extra_data,
+		.done = 0,
+	};
+	iterator_t *it = malloc(sizeof(*it));
+	*it = (iterator_t) {
+		.data = data,
+		.next = citer_take_while_next,
+		.free_data = citer_take_while_free_data,
+	};
+	return it;
+}
