@@ -167,3 +167,4 @@ All iterators and functions below are prefixed with the name `citer_` to avoid c
 | next       | Returns the next item of the iterator.                                                |
 | next_back  | Returns the next item from the back of a double-ended iterator.                       |
 | nth        | Returns the Nth item of an iterator.                                                  |
+| nth_back   | Returns the Nth item from the end of a double-ended iterator.                         |

@@ -91,6 +91,18 @@ void *citer_nth(iterator_t *it, size_t n) {
 	return citer_next(it);
 }
 
+void *citer_nth_back(iterator_t *it, size_t n) {
+	/* TODO: Notify caller of error. */
+	if (!citer_is_double_ended(it))
+		return NULL;
+
+	while (n) {
+		citer_next_back(it);
+		n--;
+	}
+	return citer_next_back(it);
+}
+
 typedef struct citer_take_while_data {
 	iterator_t *orig;
 	citer_predicate_t predicate;
