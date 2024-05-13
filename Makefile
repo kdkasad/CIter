@@ -18,10 +18,8 @@
 
 PREFIX = /usr/local
 
+NAME = citer
 VERSION = 0.0.0
-STATICLIB = libciter.a
-DYLIB = libciter.so
-HEADER = citer.h
 LICENSE_HEADER_LENGTH = 18
 
 # Order matters here. The "iterator" module must come first, so that when
@@ -56,6 +54,9 @@ EXAMPLES = \
 	skip_take_while
 EXAMPLES_BIN = $(addprefix examples/,$(EXAMPLES))
 
+STATICLIB = lib$(NAME).a
+DYLIB = lib$(NAME).so
+HEADER = $(NAME).h
 OBJS = $(patsubst %,build/%.o,$(MODULES))
 SONAME = $(DYLIB).$(firstword $(subst ., ,$(VERSION)))
 
@@ -95,7 +96,7 @@ $(OBJS): build/%.o: src/%.c $(HEADER) | build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 
 $(EXAMPLES_BIN): LDFLAGS += -L.
-$(EXAMPLES_BIN): LDLIBS += -l$(patsubst lib%.a,%,$(STATICLIB))
+$(EXAMPLES_BIN): LDLIBS += -l$(NAME)
 $(EXAMPLES_BIN): examples/%: examples/%.c $(STATICLIB)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $< $(LDFLAGS) $(LDLIBS)
 
