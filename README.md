@@ -146,6 +146,7 @@ All iterators and functions below are prefixed with the name `citer_` to avoid c
 | skip_while | Skips the items of another iterator until a given predicate function returns false.                                 |
 | take       | Iterates over the first N items of another iterator.                                                                |
 | take_while | Iterates over items of another iterator until a given predicate function returns false.                             |
+| zip        | Zips two iterators together, returning pairs of items, one from each input iterator.                                |
 
 ### Functions
 
