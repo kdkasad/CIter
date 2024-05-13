@@ -50,53 +50,52 @@ iterator_t *citer_map(iterator_t *orig, citer_map_fn_t fn) {
     return it;
 }
 
-typedef struct citer_flat_map_data {
-    iterator_t *orig;
-    iterator_t *(*fn)(void *);
-    iterator_t *cur;
-} citer_flat_map_data_t;
+iterator_t *citer_flat_map(iterator_t *orig, citer_flat_map_fn_t fn) {
+    return citer_flatten(citer_map(orig, (citer_map_fn_t) fn));
+}
 
-static void *citer_flat_map_next(void *_data) {
-    citer_flat_map_data_t *data = (citer_flat_map_data_t *) _data;
-    for (;;) {
+typedef struct citer_flatten_data {
+    iterator_t *orig;
+    iterator_t *cur;
+} citer_flatten_data_t;
+
+void *citer_flatten_next(void *_data) {
+    citer_flatten_data_t *data = (citer_flatten_data_t *) _data;
+    void *item = NULL;
+    while (!item) {
         if (data->cur) {
             void *item = citer_next(data->cur);
-            if (item) {
-                return item;
-            } else {
+            if (!item) {
                 citer_free(data->cur);
                 data->cur = NULL;
             }
         }
-        void *orig_item = citer_next(data->orig);
-        if (!orig_item) {
-            return NULL;
+        if (!data->cur) {
+            data->cur = citer_next(data->orig);
         }
-        data->cur = data->fn(orig_item);
     }
+    return item;
 }
 
-static void citer_flat_map_free_data(void *_data) {
-    citer_flat_map_data_t *data = (citer_flat_map_data_t *) _data;
-    citer_free(data->orig);
-    if (data->cur) {
+void citer_flatten_free_data(void *_data) {
+    citer_flatten_data_t *data = (citer_flatten_data_t *) _data;
+    if (data->cur)
         citer_free(data->cur);
-    }
+    citer_free(data->orig);
     free(data);
 }
 
-iterator_t *citer_flat_map(iterator_t *orig, citer_flat_map_fn_t fn) {
-    citer_flat_map_data_t *data = malloc(sizeof(*data));
-    *data = (citer_flat_map_data_t) {
+iterator_t *citer_flatten(iterator_t *orig) {
+    citer_flatten_data_t *data = malloc(sizeof(*data));
+    *data = (citer_flatten_data_t) {
         .orig = orig,
-        .fn = fn,
-        .cur = NULL
+        .cur = NULL,
     };
     iterator_t *it = malloc(sizeof(*it));
     *it = (iterator_t) {
         .data = data,
-        .next = citer_flat_map_next,
-        .free_data = citer_flat_map_free_data
+        .next = citer_flatten_next,
+        .free_data = citer_flatten_free_data,
     };
     return it;
 }

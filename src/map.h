@@ -29,4 +29,15 @@ typedef iterator_t *(*citer_flat_map_fn_t)(void *);
 iterator_t *citer_map(iterator_t *, citer_map_fn_t);
 iterator_t *citer_flat_map(iterator_t *, citer_flat_map_fn_t);
 
+/*
+ * Flatten an iterator over iterators.
+ *
+ * Takes an iterator whose items are of type (iterator_t *). Returns an iterator
+ * which yields the items of the each iterator in the input iterator.
+ *
+ * The returned iterator is heap-allocated and must be freed using citer_free().
+ * Freeing this iterator will free the original iterator as well.
+ */
+iterator_t *citer_flatten(iterator_t *);
+
 #endif /* _CITER_MAP_H_ */
