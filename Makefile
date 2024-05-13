@@ -52,7 +52,8 @@ EXAMPLES = \
 	collect \
 	count_using_fold \
 	sum \
-	inspect
+	inspect \
+	skip_take_while
 EXAMPLES_BIN = $(addprefix examples/,$(EXAMPLES))
 
 OBJS = $(patsubst %,build/%.o,$(MODULES))
