@@ -49,7 +49,8 @@ EXAMPLES = \
 	minmax \
 	chunked \
 	collect \
-	count_using_fold
+	count_using_fold \
+	sum
 EXAMPLES_BIN = $(addprefix examples/,$(EXAMPLES))
 
 OBJS = $(patsubst %,build/%.o,$(MODULES))
