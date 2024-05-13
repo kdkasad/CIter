@@ -19,7 +19,7 @@
 PREFIX = /usr/local
 
 NAME = citer
-VERSION = 0.0.0
+VERSION = 0.1.0
 LICENSE_HEADER_LENGTH = 18
 
 # Order matters here. The "iterator" module must come first, so that when
