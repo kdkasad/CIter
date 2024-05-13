@@ -131,3 +131,7 @@ uninstall:
 		$(DESTDIR)$(PREFIX)/lib/$(SONAME) \
 		$(DESTDIR)$(PREFIX)/lib/$(DYLIB)
 	if command -v ldconfig >/dev/null 2>&1; then ldconfig; fi
+
+.PHONY: check
+check: $(EXAMPLES_BIN)
+	./examples/run_all.sh
