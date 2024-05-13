@@ -19,6 +19,8 @@
 #ifndef _CITER_ITERATOR_H_
 #define _CITER_ITERATOR_H_
 
+#include <stddef.h>
+
 /*
  * Iterator structure
  *
@@ -47,5 +49,15 @@ void citer_free_data(iterator_t *);
  * Free a heap-allocated iterator.
  */
 void citer_free(iterator_t *);
+
+/*
+ * Count the number of items in an iterator.
+ *
+ * Only works for finite iterators. Calling this function on an infinite
+ * iterator will result in an infinite loop.
+ *
+ * This function will consume the iterator, but will not free it.
+ */
+size_t citer_count(iterator_t *);
 
 #endif /* _CITER_ITERATOR_H_ */
