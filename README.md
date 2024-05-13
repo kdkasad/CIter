@@ -135,6 +135,32 @@ because the 5th was already returned by a call to `citer_next_back()`.
 
 </details>
 
+#### Size bounds
+
+All iterators have a size bound.
+The size bound is the bound on the number of items the iterator will return.
+
+The size bound is a structure defined as follows:
+
+```c
+typedef struct citer_size_bound {
+	size_t lower;
+	size_t upper;
+	bool lower_infinite: 1;
+    bool upper_infinite: 1;
+} citer_size_bound_t;
+```
+
+The two booleans track whether their respective limits are infinite.
+If a limit is infinite, the corresponding size is ignored.
+
+The size bound must be correct, but does not need to be exact.
+I.e. an iterator cannot return fewer items than the lower bound, nor more items than the upper bound.
+Consequently, the bound $[0, \infty)$ is valid for any iterator.
+
+An iterator is considered to have an exact size, i.e. be an exact-sized iterator,
+if and only if the lower and upper bounds are equal and neither is finite.
+
 ### Implementing your own iterators
 
 An iterator is very easy to implement.
@@ -148,6 +174,7 @@ typedef void *(*citer_next_fn)(void *);
 typedef void (*citer_free_data_fn)(void *);
 
 typedef struct iterator_t {
+    citer_size_bound_t size_bound;
     void *data;
 	citer_next_fn next;
 	citer_next_fn next_back;
@@ -169,12 +196,14 @@ The `free_data` function should deallocate any heap-allocated memory in the `dat
 If `data` is a pointer to a struct, and that struct was heap-allocated when the iterator was created,
 `free_data` should free that struct.
 
-It is recommended to create a function to create an iterator,
+See the [Size bounds](#size-bounds) section for information on the `size_bound` field.
+
+It is recommended to create a function to construct an iterator,
 which heap-allocates the `iterator_t` struct and sets the fields appropriately.
 
-## List of iterators and functions
+## List of items
 
-All iterators and functions below are prefixed with the name `citer_` to avoid clobbering the global namespace.
+All names below are prefixed with the name `citer_` in the code to avoid clobbering the global namespace.
 
 ### Iterators
 
@@ -216,10 +245,35 @@ I: Inherited (i.e. double-ended if all input iterators are double-ended)
 | fold       | Accumulate all items of an iterator into a single value using a given function.       |
 | free       | Frees (de-allocates) an iterator and its associated data.                             |
 | free_data  | Frees the data associated with an iterator, but not the iterator structure itself.    |
+| has_exact_size  | Returns true if and only if an iterator has an exact size.                       |
 | is_double_ended | Checks if an iterator is double-ended.                                           |
+| is_infinite     | Returns true if and only if the iterator is guaranteed to return an infinite number of items. This has a caveat which is documented in a comment in `citer.h`. |
 | max        | Returns the maximum item of an iterator, comparing using a given comparison function. |
 | min        | Returns the minimum item of an iterator, comparing using a given comparison function. |
 | next       | Returns the next item of the iterator.                                                |
 | next_back  | Returns the next item from the back of a double-ended iterator.                       |
 | nth        | Returns the Nth item of an iterator.                                                  |
 | nth_back   | Returns the Nth item from the end of a double-ended iterator.                         |
+
+### Size bound macros
+
+*Note: In the table below, "iff" means "if and only if".*
+
+| Macro                       | Description                                                                                 |
+| ---                         | ---                                                                                         |
+| `bound_is_exact(bound)`     | Returns true iff the size bound is exact.                                                   |
+| `bound_add(bound, N)`       | *Adds N to both limits of the size bound. Infinite limits are unchanged.                    |
+| `bound_sub(bound, N)`       | *Subtracts N from both limits of the size bound. Infinite limits are unchanged.             |
+| `lt_lower(bound, N)`        | Returns true iff the given N is less than the lower limit of the size bound.                |
+| `le_lower(bound, N)`        | Returns true iff the given N is less than or equal to the lower limit of the size bound.    |
+| `gt_lower(bound, N)`        | Returns true iff the given N is greater than the lower limit of the size bound.             |
+| `ge_lower(bound, N)`        | Returns true iff the given N is greater than or equal to the lower limit of the size bound. |
+| `lt_upper(bound, N)`        | Returns true iff the given N is less than the upper limit of the size bound.                |
+| `le_upper(bound, N)`        | Returns true iff the given N is less than or equal to the upper limit of the size bound.    |
+| `gt_upper(bound, N)`        | Returns true iff the given N is greater than the upper limit of the size bound.             |
+| `ge_upper(bound, N)`        | Returns true iff the given N is greater than or equal to the upper limit of the size bound. |
+| `DEFAULT_SIZE_BOUND`        | A compound literal representing the default size bound, $[0, \infty)$.                      |
+
+\*
+When adding and subtracting, the result is clamped to the range `[0, SIZE_MAX]`.
+When adding would overflow, the limit is marked as infinite.

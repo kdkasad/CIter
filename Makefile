@@ -26,6 +26,7 @@ LICENSE_HEADER_LENGTH = 18
 # citer.h is constructed, the iterator_t type is defined for all subsequent
 # modules which use it.
 MODULES = \
+	size \
 	iterator \
 	filters \
 	repeat \
@@ -39,6 +40,7 @@ MODULES = \
 	inspect \
 	zip \
 	reverse
+HEADERONLY = size
 
 EXAMPLES = \
 	repeat_take \
@@ -61,7 +63,7 @@ EXAMPLES_BIN = $(addprefix examples/,$(EXAMPLES))
 STATICLIB = lib$(NAME).a
 DYLIB = lib$(NAME).so
 HEADER = $(NAME).h
-OBJS = $(patsubst %,build/%.o,$(MODULES))
+OBJS = $(patsubst %,build/%.o,$(filter-out $(HEADERONLY),$(MODULES)))
 SONAME = $(DYLIB).$(firstword $(subst ., ,$(VERSION)))
 
 CFLAGS = -Wall -Werror -std=c99 -fPIC

@@ -22,6 +22,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "size.h"
+
 /*
  * Function type for getting the next item from an iterator.
  * Used for both iterator_t::next() and iterator_t::next_back().
@@ -48,6 +50,7 @@ typedef void (*citer_free_data_fn)(void *);
  *               frees (de-allocates) said data.
  */
 typedef struct iterator_t {
+	citer_size_bound_t size_bound;
 	void *data;
 	citer_next_fn next;
 	citer_next_fn next_back;
@@ -90,5 +93,22 @@ void citer_free(iterator_t *);
  * This function will consume the iterator, but will not free it.
  */
 size_t citer_count(iterator_t *);
+
+/*
+ * Check if an iterator has an exact size.
+ * Returns 1 if the iterator has an exact known size and 0 otherwise.
+ */
+#define citer_has_exact_size(it) (citer_bound_is_exact((it)->size_bound))
+
+/*
+ * Whether an iterator is guaranteed to be infinite.
+ *
+ * Returns 1 if and only if the iterator's lower size bound is infinite.
+ *
+ * It is possible for an iterator to return an infinite number of items even
+ * when this macro returns 0, because this macro checks whether it is guaranteed
+ * to be infinite, not whether it can be infinite.
+ */
+#define citer_is_infinite(it) (!!(it)->size_bound.lower_infinite)
 
 #endif /* _CITER_ITERATOR_H_ */
