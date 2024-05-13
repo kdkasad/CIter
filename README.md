@@ -140,6 +140,7 @@ All iterators and functions below are prefixed with the name `citer_` to avoid c
 | flatten    | Flattens an iterator of iterators into a single iterator.                                                           |
 | inspect    | Calls a callback function on each item of an iterator, without modifying the returned items.                        |
 | map        | Maps each item of an iterator using a callback function.                                                            |
+| once       | Iterator which returns a given item once. Equivalent to `citer_take(citer_repeat(item), 1)`.                        |
 | over_array | Iterates over the items in an array. Returns a pointer to each item in the array as the item.                       |
 | repeat     | Iterator which repeatedly returns the same item.                                                                    |
 | skip       | Skips the first N items of another iterator.                                                                        |
