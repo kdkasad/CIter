@@ -32,6 +32,12 @@ static void *citer_map_next(void *_data) {
     return next ? data->fn(next) : NULL;
 }
 
+static void *citer_map_next_back(void *_data) {
+    citer_map_data_t *data = (citer_map_data_t *) _data;
+    void *next = citer_next_back(data->orig);
+    return next ? data->fn(next) : NULL;
+}
+
 static void citer_map_free_data(void *_data) {
     citer_map_data_t *data = (citer_map_data_t *) _data;
     citer_free(data->orig);
@@ -45,7 +51,7 @@ iterator_t *citer_map(iterator_t *orig, citer_map_fn_t fn) {
     *it = (iterator_t) {
         .data = data,
         .next = citer_map_next,
-        .next_back = NULL,
+        .next_back = citer_is_double_ended(orig) ? citer_map_next_back : NULL,
         .free_data = citer_map_free_data
     };
     return it;
@@ -55,6 +61,7 @@ iterator_t *citer_flat_map(iterator_t *orig, citer_flat_map_fn_t fn) {
     return citer_flatten(citer_map(orig, (citer_map_fn_t) fn));
 }
 
+/* FIXME: Make flatten double-ended */
 typedef struct citer_flatten_data {
     iterator_t *orig;
     iterator_t *cur;

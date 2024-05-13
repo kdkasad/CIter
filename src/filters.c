@@ -83,6 +83,16 @@ static void *citer_filter_next(void *_data) {
     return NULL;
 }
 
+static void *citer_filter_next_back(void *_data) {
+    citer_filter_data_t *data = (citer_filter_data_t *) _data;
+    void *item;
+    while ((item = citer_next_back(data->orig))) {
+        if (data->predicate(item, data->predicate_data))
+            return item;
+    }
+    return NULL;
+}
+
 static void citer_filter_free_data(void *_data) {
     citer_filter_data_t *data = (citer_filter_data_t *) _data;
     citer_free(data->orig);
@@ -100,7 +110,7 @@ iterator_t *citer_filter(iterator_t *orig, citer_predicate_t predicate, void *ex
     *it = (iterator_t) {
         .data = data,
         .next = citer_filter_next,
-        .next_back = NULL,
+        .next_back = citer_is_double_ended(orig) ? citer_filter_next_back : NULL,
         .free_data = citer_filter_free_data,
     };
     return it;

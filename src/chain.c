@@ -34,6 +34,15 @@ static void *citer_chain_next(void *_data) {
 		return citer_next(data->second);
 }
 
+static void *citer_chain_next_back(void *_data) {
+	citer_chain_data_t *data = (citer_chain_data_t *) _data;;
+	void *item;
+	if ((item = citer_next_back(data->second)))
+		return item;
+	else
+		return citer_next_back(data->first);
+}
+
 static void citer_chain_free_data(void *_data) {
 	citer_chain_data_t *data = (citer_chain_data_t *) _data;
 	citer_free(data->first);
@@ -54,5 +63,10 @@ iterator_t *citer_chain(iterator_t *first, iterator_t *second) {
 		.next_back = NULL,
 		.free_data = citer_chain_free_data,
 	};
+
+	/* Make chain double-ended if both inputs are. */
+	if (first->next_back && second->next_back)
+		it->next_back = citer_chain_next_back;
+
 	return it;
 }

@@ -33,7 +33,7 @@ iterator_t *citer_repeat(void *item) {
 	*it = (iterator_t) {
 		.data = item,
 		.next = citer_repeat_next,
-		.next_back = NULL,
+		.next_back = citer_repeat_next,
 		.free_data = citer_repeat_free_data,
 	};
 	return it;

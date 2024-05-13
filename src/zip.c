@@ -20,6 +20,8 @@
 
 #include <stdlib.h>
 
+/* TODO: Once size reporting is implemented, make zip double-ended. */
+
 typedef struct citer_zip_data {
 	iterator_t *first;
 	iterator_t *second;
