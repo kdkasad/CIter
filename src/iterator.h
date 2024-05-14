@@ -24,11 +24,14 @@
 
 #include "size.h"
 
+/* Forward declaration for use in the function typedefs below. */
+typedef struct iterator_t iterator_t;
+
 /*
  * Function type for getting the next item from an iterator.
  * Used for both iterator_t::next() and iterator_t::next_back().
  */
-typedef void *(*citer_next_fn)(void *);
+typedef void *(*citer_next_fn)(iterator_t *);
 
 /*
  * Function type for freeing an iterator's data.
@@ -49,13 +52,13 @@ typedef void (*citer_free_data_fn)(void *);
  *   free_data - A method that takes a pointer to this iterator_t's data and
  *               frees (de-allocates) said data.
  */
-typedef struct iterator_t {
+struct iterator_t {
 	citer_size_bound_t size_bound;
 	void *data;
 	citer_next_fn next;
 	citer_next_fn next_back;
 	citer_free_data_fn free_data;
-} iterator_t;
+};
 
 /*
  * Create a new iterator.

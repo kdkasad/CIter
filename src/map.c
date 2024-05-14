@@ -25,14 +25,14 @@ typedef struct citer_map_data {
     void *(*fn)(void *);
 } citer_map_data_t;
 
-static void *citer_map_next(void *_data) {
-    citer_map_data_t *data = (citer_map_data_t *) _data;
+static void *citer_map_next(iterator_t *self) {
+    citer_map_data_t *data = (citer_map_data_t *) self->data;
     void *next = citer_next(data->orig);
     return next ? data->fn(next) : NULL;
 }
 
-static void *citer_map_next_back(void *_data) {
-    citer_map_data_t *data = (citer_map_data_t *) _data;
+static void *citer_map_next_back(iterator_t *self) {
+    citer_map_data_t *data = (citer_map_data_t *) self->data;
     void *next = citer_next_back(data->orig);
     return next ? data->fn(next) : NULL;
 }
@@ -61,8 +61,8 @@ typedef struct citer_flatten_data {
     iterator_t *cur_back;
 } citer_flatten_data_t;
 
-void *citer_flatten_next(void *_data) {
-    citer_flatten_data_t *data = (citer_flatten_data_t *) _data;
+void *citer_flatten_next(iterator_t *self) {
+    citer_flatten_data_t *data = (citer_flatten_data_t *) self->data;
     void *item = NULL;
     while (!item) {
         if (data->cur) {
@@ -84,8 +84,8 @@ void *citer_flatten_next(void *_data) {
     return item;
 }
 
-void *citer_flatten_next_back(void *_data) {
-    citer_flatten_data_t *data = (citer_flatten_data_t *) _data;
+void *citer_flatten_next_back(iterator_t *self) {
+    citer_flatten_data_t *data = (citer_flatten_data_t *) self->data;
     void *item = NULL;
     while (!item) {
         if (data->cur_back) {

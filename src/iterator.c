@@ -46,15 +46,15 @@ void *citer_new(
  * Get the next item from an iterator_t.
  */
 void *citer_next(iterator_t *it) {
-	return it->next(it->data);
+	return it->next(it);
 }
 
 /*
  * Get the next item from the back of a double-ended iterator.
  */
 void *citer_next_back(iterator_t *it) {
-	if (it->next_back)
-		return it->next_back(it->data);
+	if (citer_is_double_ended(it))
+		return it->next_back(it);
 	else
 		/* TODO: Notify caller of error. */
 		return NULL;

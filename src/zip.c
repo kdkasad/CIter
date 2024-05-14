@@ -28,8 +28,8 @@ typedef struct citer_zip_data {
 	citer_pair_t pair;
 } citer_zip_data_t;
 
-static void *citer_zip_next(void *_data) {
-	citer_zip_data_t *data = (citer_zip_data_t *) _data;;
+static void *citer_zip_next(iterator_t *self) {
+	citer_zip_data_t *data = (citer_zip_data_t *) self->data;;
 
 	void *x = citer_next(data->first);
 	void *y = citer_next(data->second);

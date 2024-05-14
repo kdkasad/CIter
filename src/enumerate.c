@@ -28,8 +28,8 @@ typedef struct citer_enumerate_data {
     citer_enumerate_item_t itemspace;
 } citer_enumerate_data_t;
 
-static void *citer_enumerate_next(void *_data) {
-    citer_enumerate_data_t *data = _data;
+static void *citer_enumerate_next(iterator_t *self) {
+    citer_enumerate_data_t *data = (citer_enumerate_data_t *) self->data;
     void *next = citer_next(data->orig);
     if (!next)
         return NULL;

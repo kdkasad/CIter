@@ -26,15 +26,15 @@ typedef struct citer_inspect_data {
     void *fn_data;
 } citer_inspect_data_t;
 
-static void *citer_inspect_next(void *_data) {
-    citer_inspect_data_t *data = (citer_inspect_data_t *) _data;
+static void *citer_inspect_next(iterator_t *self) {
+    citer_inspect_data_t *data = (citer_inspect_data_t *) self->data;
     void *item = citer_next(data->orig);
     data->fn(item, data->fn_data);
     return item;
 }
 
-static void *citer_inspect_next_back(void *_data) {
-    citer_inspect_data_t *data = (citer_inspect_data_t *) _data;
+static void *citer_inspect_next_back(iterator_t *self) {
+    citer_inspect_data_t *data = (citer_inspect_data_t *) self->data;
     void *item = citer_next_back(data->orig);
     data->fn(item, data->fn_data);
     return item;

@@ -20,8 +20,8 @@
 
 #include <stdlib.h>
 
-static void *citer_repeat_next(void *data) {
-	return data;
+static void *citer_repeat_next(iterator_t *self) {
+	return self->data;
 }
 
 static void citer_repeat_free_data(void *data) {
@@ -50,8 +50,8 @@ typedef struct citer_once_data {
 	void *item;
 } citer_once_data_t;
 
-static void *citer_once_next(void *_data) {
-	citer_once_data_t *data = (citer_once_data_t *) _data;
+static void *citer_once_next(iterator_t *self) {
+	citer_once_data_t *data = (citer_once_data_t *) self->data;
 	void *item = NULL;
 	if (data->item) {
 		item = data->item;

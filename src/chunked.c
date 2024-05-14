@@ -29,8 +29,8 @@ typedef struct citer_chunked_data {
     size_t chunksize;
 } citer_chunked_data_t;
 
-static void *citer_chunked_next(void *_data) {
-    citer_chunked_data_t *data = (citer_chunked_data_t *) _data;
+static void *citer_chunked_next(iterator_t *self) {
+    citer_chunked_data_t *data = (citer_chunked_data_t *) self->data;
 
     void *first = citer_next(data->orig);
     if (!first)

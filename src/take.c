@@ -27,8 +27,8 @@ typedef struct citer_take_data {
 	size_t count;
 } citer_take_data_t;
 
-static void *citer_take_next(void *_data) {
-	citer_take_data_t *data = (citer_take_data_t *) _data;
+static void *citer_take_next(iterator_t *self) {
+	citer_take_data_t *data = (citer_take_data_t *) self->data;
 	if (data->count) {
 		data->count--;
 		return citer_next(data->original);
@@ -70,8 +70,8 @@ iterator_t *citer_take(iterator_t *original, size_t count) {
 	);
 }
 
-static void *citer_skip_next(void *_data) {
-	citer_take_data_t *data = (citer_take_data_t *) _data;
+static void *citer_skip_next(iterator_t *self) {
+	citer_take_data_t *data = (citer_take_data_t *) self->data;
 	while (data->count > 0) {
 		data->count--;
 		citer_next(data->original);
@@ -81,8 +81,8 @@ static void *citer_skip_next(void *_data) {
 
 /* TODO: Once size reporting is implemented, make this O(1) for fixed-size
  * iterators. */
-static void *citer_skip_next_back(void *_data) {
-	citer_take_data_t *data = (citer_take_data_t *) _data;
+static void *citer_skip_next_back(iterator_t *self) {
+	citer_take_data_t *data = (citer_take_data_t *) self->data;
 	/* Skip items from the front, not the back. */
 	while (data->count > 0) {
 		data->count--;
@@ -138,8 +138,8 @@ typedef struct citer_take_while_data {
 	unsigned char done;
 } citer_take_while_data_t;
 
-static void *citer_take_while_next(void *_data) {
-	citer_take_while_data_t *data = (citer_take_while_data_t *) _data;
+static void *citer_take_while_next(iterator_t *self) {
+	citer_take_while_data_t *data = (citer_take_while_data_t *) self->data;
 
 	if (data->done)
 		return NULL;
@@ -181,8 +181,8 @@ iterator_t *citer_take_while(iterator_t *orig, citer_predicate_t predicate, void
 	);
 }
 
-static void *citer_skip_while_next(void *_data) {
-	citer_take_while_data_t *data = (citer_take_while_data_t *) _data;
+static void *citer_skip_while_next(iterator_t *self) {
+	citer_take_while_data_t *data = (citer_take_while_data_t *) self->data;
 
 	if (data->done)
 		return citer_next(data->orig);

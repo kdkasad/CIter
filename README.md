@@ -170,8 +170,8 @@ and `citer_map()` in `map.c` is a good example of a very powerful iterator which
 
 The `iterator_t` type is defined as follows:
 ```c
-typedef void *(*citer_next_fn)(void *);
-typedef void (*citer_free_data_fn)(void *);
+typedef void *(*citer_next_fn)(iterator_t *self);
+typedef void (*citer_free_data_fn)(void *data);
 
 typedef struct iterator_t {
     citer_size_bound_t size_bound;
@@ -183,9 +183,11 @@ typedef struct iterator_t {
 ```
 
 The `data` field can be anything you want.
-It is passed to the `next` and `next_back` functions but is not used anywhere else (except `free_data()`).
+It is stored in the iterator and can be accessed by the iterator's functions in order to store state.
 
 The `next` function should return the next item of this iterator, or `NULL` if the iterator is exhausted.
+The only argument is a pointer to the iterator structure, just like the `self` parameter in Python and Rust.
+The `next` function should update the iterator's size bound to reflect the number of items remaining.
 
 The `next_back` function is the same as `next`,
 but should return the next item from the back (i.e. end) of the iterator.

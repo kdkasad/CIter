@@ -73,8 +73,8 @@ typedef struct citer_filter_data {
     void *predicate_data;
 } citer_filter_data_t;
 
-static void *citer_filter_next(void *_data) {
-    citer_filter_data_t *data = (citer_filter_data_t *) _data;
+static void *citer_filter_next(iterator_t *self) {
+    citer_filter_data_t *data = (citer_filter_data_t *) self->data;
     void *item;
     while ((item = citer_next(data->orig))) {
         if (data->predicate(item, data->predicate_data))
@@ -83,8 +83,8 @@ static void *citer_filter_next(void *_data) {
     return NULL;
 }
 
-static void *citer_filter_next_back(void *_data) {
-    citer_filter_data_t *data = (citer_filter_data_t *) _data;
+static void *citer_filter_next_back(iterator_t *self) {
+    citer_filter_data_t *data = (citer_filter_data_t *) self->data;
     void *item;
     while ((item = citer_next_back(data->orig))) {
         if (data->predicate(item, data->predicate_data))

@@ -27,8 +27,8 @@ typedef struct citer_over_array_data {
 	size_t i;
 } citer_over_array_data_t;
 
-static void *citer_over_array_next(void *_data) {
-	citer_over_array_data_t *data = (citer_over_array_data_t *) _data;
+static void *citer_over_array_next(iterator_t *self) {
+	citer_over_array_data_t *data = (citer_over_array_data_t *) self->data;
 	if (data->i < data->len) {
 		/* Cast to (char *) so pointer arithmetic is in terms of bytes. */
 		return (void *) (((char *) data->array) + (data->i++ * data->itemsize));
@@ -37,8 +37,8 @@ static void *citer_over_array_next(void *_data) {
 	}
 }
 
-static void *citer_over_array_next_back(void *_data) {
-	citer_over_array_data_t *data = (citer_over_array_data_t *) _data;
+static void *citer_over_array_next_back(iterator_t *self) {
+	citer_over_array_data_t *data = (citer_over_array_data_t *) self->data;
 	if (data->i < data->len) {
 		/* Cast to (char *) so pointer arithmetic is in terms of bytes. */
 		return (void *) (((char *) data->array) + (((data->len--) - 1) * data->itemsize));
