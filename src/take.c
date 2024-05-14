@@ -17,7 +17,6 @@
  */
 
 #include "take.h"
-#include "src/iterator.h"
 
 #include <stdlib.h>
 

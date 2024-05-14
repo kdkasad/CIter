@@ -17,7 +17,6 @@
  */
 
 #include "chain.h"
-#include "src/iterator.h"
 
 #include <stdlib.h>
 
