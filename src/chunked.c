@@ -36,6 +36,8 @@ static void *citer_chunked_next(iterator_t *self) {
     if (!first)
         return NULL;
 
+    citer_bound_sub(self->size_bound, 1);
+
     void **chunk = malloc(data->chunksize * sizeof(*chunk));
     chunk[0] = first;
     for (size_t i = 1; i < data->chunksize; i++) {

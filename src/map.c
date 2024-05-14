@@ -26,12 +26,14 @@ typedef struct citer_map_data {
 } citer_map_data_t;
 
 static void *citer_map_next(iterator_t *self) {
+    citer_bound_sub(self->size_bound, 1);
     citer_map_data_t *data = (citer_map_data_t *) self->data;
     void *next = citer_next(data->orig);
     return next ? data->fn(next) : NULL;
 }
 
 static void *citer_map_next_back(iterator_t *self) {
+    citer_bound_sub(self->size_bound, 1);
     citer_map_data_t *data = (citer_map_data_t *) self->data;
     void *next = citer_next_back(data->orig);
     return next ? data->fn(next) : NULL;
@@ -62,6 +64,7 @@ typedef struct citer_flatten_data {
 } citer_flatten_data_t;
 
 void *citer_flatten_next(iterator_t *self) {
+    /* Here, we don't update the size bound because the bound is always [0, inf). */
     citer_flatten_data_t *data = (citer_flatten_data_t *) self->data;
     void *item = NULL;
     while (!item) {
@@ -85,6 +88,7 @@ void *citer_flatten_next(iterator_t *self) {
 }
 
 void *citer_flatten_next_back(iterator_t *self) {
+    /* Here, we don't update the size bound because the bound is always [0, inf). */
     citer_flatten_data_t *data = (citer_flatten_data_t *) self->data;
     void *item = NULL;
     while (!item) {

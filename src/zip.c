@@ -31,6 +31,8 @@ typedef struct citer_zip_data {
 static void *citer_zip_next(iterator_t *self) {
 	citer_zip_data_t *data = (citer_zip_data_t *) self->data;;
 
+	citer_bound_sub(self->size_bound, 1);
+
 	void *x = citer_next(data->first);
 	void *y = citer_next(data->second);
 

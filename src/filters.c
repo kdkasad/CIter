@@ -77,6 +77,8 @@ static void *citer_filter_next(iterator_t *self) {
     citer_filter_data_t *data = (citer_filter_data_t *) self->data;
     void *item;
     while ((item = citer_next(data->orig))) {
+        /* Only decrease upper bound because bottom bound is 0. */
+        self->size_bound.upper--;
         if (data->predicate(item, data->predicate_data))
             return item;
     }
@@ -87,6 +89,8 @@ static void *citer_filter_next_back(iterator_t *self) {
     citer_filter_data_t *data = (citer_filter_data_t *) self->data;
     void *item;
     while ((item = citer_next_back(data->orig))) {
+        /* Only decrease upper bound because bottom bound is 0. */
+        self->size_bound.upper--;
         if (data->predicate(item, data->predicate_data))
             return item;
     }

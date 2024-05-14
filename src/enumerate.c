@@ -33,6 +33,7 @@ static void *citer_enumerate_next(iterator_t *self) {
     void *next = citer_next(data->orig);
     if (!next)
         return NULL;
+    citer_bound_sub(self->size_bound, 1);
     data->itemspace = (citer_enumerate_item_t) {
         .index = data->index++,
         .item = next,

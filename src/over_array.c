@@ -30,6 +30,10 @@ typedef struct citer_over_array_data {
 static void *citer_over_array_next(iterator_t *self) {
 	citer_over_array_data_t *data = (citer_over_array_data_t *) self->data;
 	if (data->i < data->len) {
+		/* Don't use citer_bound_sub() because we know that the bounds are
+		 * non-zero if there's another item to return. */
+		self->size_bound.lower--;
+		self->size_bound.upper--;
 		/* Cast to (char *) so pointer arithmetic is in terms of bytes. */
 		return (void *) (((char *) data->array) + (data->i++ * data->itemsize));
 	} else {
@@ -40,6 +44,10 @@ static void *citer_over_array_next(iterator_t *self) {
 static void *citer_over_array_next_back(iterator_t *self) {
 	citer_over_array_data_t *data = (citer_over_array_data_t *) self->data;
 	if (data->i < data->len) {
+		/* Don't use citer_bound_sub() because we know that the bounds are
+		 * non-zero if there's another item to return. */
+		self->size_bound.lower--;
+		self->size_bound.upper--;
 		/* Cast to (char *) so pointer arithmetic is in terms of bytes. */
 		return (void *) (((char *) data->array) + (((data->len--) - 1) * data->itemsize));
 	} else {

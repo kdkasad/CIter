@@ -28,6 +28,7 @@ typedef struct citer_chain_data {
 
 static void *citer_chain_next(iterator_t *self) {
 	citer_chain_data_t *data = (citer_chain_data_t *) self->data;
+	citer_bound_sub(self->size_bound, 1);
 	void *item;
 	if ((item = citer_next(data->first)))
 		return item;
@@ -37,6 +38,7 @@ static void *citer_chain_next(iterator_t *self) {
 
 static void *citer_chain_next_back(iterator_t *self) {
 	citer_chain_data_t *data = (citer_chain_data_t *) self->data;
+	citer_bound_sub(self->size_bound, 1);
 	void *item;
 	if ((item = citer_next_back(data->second)))
 		return item;

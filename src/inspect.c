@@ -28,6 +28,7 @@ typedef struct citer_inspect_data {
 
 static void *citer_inspect_next(iterator_t *self) {
     citer_inspect_data_t *data = (citer_inspect_data_t *) self->data;
+    citer_bound_sub(self->size_bound, 1);
     void *item = citer_next(data->orig);
     data->fn(item, data->fn_data);
     return item;
@@ -35,6 +36,7 @@ static void *citer_inspect_next(iterator_t *self) {
 
 static void *citer_inspect_next_back(iterator_t *self) {
     citer_inspect_data_t *data = (citer_inspect_data_t *) self->data;
+    citer_bound_sub(self->size_bound, 1);
     void *item = citer_next_back(data->orig);
     data->fn(item, data->fn_data);
     return item;

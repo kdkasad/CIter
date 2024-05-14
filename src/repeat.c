@@ -54,6 +54,8 @@ static void *citer_once_next(iterator_t *self) {
 	citer_once_data_t *data = (citer_once_data_t *) self->data;
 	void *item = NULL;
 	if (data->item) {
+		self->size_bound.lower = 0;
+		self->size_bound.upper = 0;
 		item = data->item;
 		data->item = NULL;
 	}
