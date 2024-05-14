@@ -228,13 +228,13 @@ All names below are prefixed with the name `citer_` in the code to avoid clobber
 | skip_while | N | Skips the items of another iterator until a given predicate function returns false.                                 |
 | take       | E | Iterates over the first N items of another iterator.                                                                |
 | take_while | N | Iterates over items of another iterator until a given predicate function returns false.                             |
-| zip        | N | Zips two iterators together, returning pairs of items, one from each input iterator.                                |
+| zip        | E | Zips two iterators together, returning pairs of items, one from each input iterator.                                |
 
 \* Abbreviations:
  - Y: Yes,
  - N: No,
  - I: Inherited (i.e. double-ended if all input iterators are double-ended),
- - E: Inherited for exact-size iterators only.
+ - E: Inherited for exact-size source iterators only.
 
 ### Functions
 

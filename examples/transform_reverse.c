@@ -125,5 +125,29 @@ start_chunked:;
         citer_free(it);
     }
 
+    /* Zip reverse */
+    puts("Zip reverse:");
+    {
+        unsigned long items[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+        size_t len = sizeof(items) / sizeof(*items);
+
+        iterator_t *s1 = citer_over_array(items, sizeof(*items), len);
+        iterator_t *s2 = citer_reverse(citer_over_array(items, sizeof(*items), len));
+        iterator_t *it = citer_reverse(citer_zip(s1, s2));
+
+        printf("Size bound: { lower = %lu, upper = %lu }\n", it->size_bound.lower, it->size_bound.upper);
+
+        for (int i = 0; i < len; i++) {
+            citer_pair_t *pair = (citer_pair_t *) citer_next(it);
+            unsigned long x = *((unsigned long *) pair->x);
+            unsigned long y = *((unsigned long *) pair->y);
+            printf("Got: (%lu, %lu)\n", x, y);
+            assert(x == items[len - i - 1]);
+            assert(y == items[i]);
+        }
+        assert(citer_next(it) == NULL);
+        citer_free(it);
+    }
+
     return 0;
 }
