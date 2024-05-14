@@ -60,42 +60,42 @@ typedef struct citer_size_bound {
 /*
  * True if N is greater than the upper limit of this size bound.
  */
-#define citer_gt_upper(bound, N) (!(bound).upper_infinite && ((N) > (bound).upper)))
+#define citer_gt_upper(bound, N) (!(bound).upper_infinite && ((N) > (bound).upper))
 
 /*
  * True if N is greater than or equal to the upper limit of this size bound.
  */
-#define citer_ge_upper(bound, N) (!(bound).upper_infinite && ((N) >= (bound).upper)))
+#define citer_ge_upper(bound, N) (!(bound).upper_infinite && ((N) >= (bound).upper))
 
 /*
  * True if N is less than the upper limit of this size bound.
  */
-#define citer_lt_upper(bound, N) ((bound).upper_infinite || ((N) < (bound).upper)))
+#define citer_lt_upper(bound, N) ((bound).upper_infinite || ((N) < (bound).upper))
 
 /*
  * True if N is less than or equal to the upper limit of this size bound.
  */
-#define citer_le_upper(bound, N) ((bound).upper_infinite || ((N) <= (bound).upper)))
+#define citer_le_upper(bound, N) ((bound).upper_infinite || ((N) <= (bound).upper))
 
 /*
  * True if N is greater than the lower limit of this size bound.
  */
-#define citer_gt_lower(bound, N) (!(bound).lower_infinite && ((N) > (bound).lower)))
+#define citer_gt_lower(bound, N) (!(bound).lower_infinite && ((N) > (bound).lower))
 
 /*
  * True if N is greater than or equal to the lower limit of this size bound.
  */
-#define citer_ge_lower(bound, N) (!(bound).lower_infinite && ((N) >= (bound).lower)))
+#define citer_ge_lower(bound, N) (!(bound).lower_infinite && ((N) >= (bound).lower))
 
 /*
  * True if N is less than the lower limit of this size bound.
  */
-#define citer_lt_lower(bound, N) ((bound).lower_infinite || ((N) < (bound).lower)))
+#define citer_lt_lower(bound, N) ((bound).lower_infinite || ((N) < (bound).lower))
 
 /*
  * True if N is less than or equal to the lower limit of this size bound.
  */
-#define citer_le_lower(bound, N) ((bound).lower_infinite || ((N) <= (bound).lower)))
+#define citer_le_lower(bound, N) ((bound).lower_infinite || ((N) <= (bound).lower))
 
 /*
  * Subtract N from the lower and upper limits of the size bound.
