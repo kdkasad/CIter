@@ -214,7 +214,7 @@ All names below are prefixed with the name `citer_` in the code to avoid clobber
 | chain      | I | Chains two iterators. Iterates over all items of the first, then all items of the second.                           |
 | chunked    | N | Iterates over N-item chunks of an iterator at a time.                                                               |
 | empty      | Y | Empty iterator. Always yields `NULL`.                                                                               |
-| enumerate  | N | Enumerates the items of an iterator. Each new item is a `citer_enumerate_item_t` containing the index and the item. |
+| enumerate  | E | Enumerates the items of an iterator. Each new item is a `citer_enumerate_item_t` containing the index and the item. |
 | filter     | I | Filters items of an iterator using a predicate function.                                                            |
 | flat_map   | I | Maps each item of an iterator to an iterator, then iterates over the items of each result iterator consecutively. Equivalent to `citer_flatten(citer_map(it, fn))`. |
 | flatten    | I | Flattens an iterator of iterators into a single iterator.                                                           |
@@ -230,10 +230,11 @@ All names below are prefixed with the name `citer_` in the code to avoid clobber
 | take_while | N | Iterates over items of another iterator until a given predicate function returns false.                             |
 | zip        | N | Zips two iterators together, returning pairs of items, one from each input iterator.                                |
 
-\*
-Y: Yes,
-N: No,
-I: Inherited (i.e. double-ended if all input iterators are double-ended)
+\* Abbreviations:
+ - Y: Yes,
+ - N: No,
+ - I: Inherited (i.e. double-ended if all input iterators are double-ended),
+ - E: Inherited for exact-size iterators only.
 
 ### Functions
 

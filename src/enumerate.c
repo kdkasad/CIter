@@ -20,8 +20,6 @@
 
 #include <stdlib.h>
 
-/* TODO: Once length reporting is implemented, make enumerate double-ended. */
-
 typedef struct citer_enumerate_data {
     iterator_t *orig;
     size_t index;
@@ -36,6 +34,21 @@ static void *citer_enumerate_next(iterator_t *self) {
     citer_bound_sub(self->size_bound, 1);
     data->itemspace = (citer_enumerate_item_t) {
         .index = data->index++,
+        .item = next,
+    };
+    return &data->itemspace;
+}
+
+static void *citer_enumerate_next_back(iterator_t *self) {
+    citer_enumerate_data_t *data = (citer_enumerate_data_t *) self->data;
+    void *next = citer_next_back(data->orig);
+    if (!next)
+        return NULL;
+    citer_bound_sub(self->size_bound, 1);
+    data->itemspace = (citer_enumerate_item_t) {
+        /* Double-endedness is only implemented for exact-size iterators, so
+         * this is safe. */
+        .index = self->size_bound.upper,
         .item = next,
     };
     return &data->itemspace;
@@ -56,7 +69,7 @@ iterator_t *citer_enumerate(iterator_t *orig) {
     return citer_new(
         data,
         citer_enumerate_next,
-        NULL,
+        citer_has_exact_size(orig) ? citer_enumerate_next_back : NULL,
         citer_enumerate_free_data,
         orig->size_bound
     );
