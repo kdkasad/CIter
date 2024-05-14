@@ -96,5 +96,20 @@ start_chunked:;
         }
     }
 
+    /* Take reverse */
+    {
+        unsigned long items[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+        size_t len = sizeof(items) / sizeof(*items);
+
+        iterator_t *it = citer_reverse(citer_take(citer_over_array(items, sizeof(*items), len), 5));
+        assert(citer_next(it) == &items[4]);
+        assert(citer_next_back(it) == &items[0]);
+        assert(citer_next(it) == &items[3]);
+        assert(citer_next(it) == &items[2]);
+        assert(citer_next(it) == &items[1]);
+        assert(citer_next(it) == NULL);
+        citer_free(it);
+    }
+
     return 0;
 }

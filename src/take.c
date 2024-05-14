@@ -20,8 +20,6 @@
 
 #include <stdlib.h>
 
-/* TODO: Once size reporting is implemented, make take double-ended. */
-
 typedef struct citer_take_data {
 	iterator_t *original;
 	size_t count;
@@ -36,6 +34,19 @@ static void *citer_take_next(iterator_t *self) {
 	} else {
 		return NULL;
 	}
+}
+
+static void *citer_take_next_back(iterator_t *self) {
+	citer_take_data_t *data = (citer_take_data_t *) self->data;
+	/* Double-endedness is only implemented for exact-size sources, so we can
+	 * treat the bounds as the exact number of items. */
+	while (data->original->size_bound.upper > data->count) {
+		/* Skip elements from the back until len == count. */
+		citer_next_back(data->original);
+	}
+	data->count--;
+	citer_bound_sub(self->size_bound, 1);
+	return citer_next_back(data->original);
 }
 
 static void citer_take_free_data(void *_data) {
@@ -57,6 +68,7 @@ iterator_t *citer_take(iterator_t *original, size_t count) {
 		.lower_infinite = false,
 		.upper_infinite = false
 	};
+	/* If source length < count, bounds become source length. */
 	if (!original->size_bound.lower_infinite && (original->size_bound.lower < count))
 		size_bound.lower = original->size_bound.lower;
 	if (!original->size_bound.upper_infinite && (original->size_bound.upper < count))
@@ -65,7 +77,7 @@ iterator_t *citer_take(iterator_t *original, size_t count) {
 	return citer_new(
 		data,
 		citer_take_next,
-        NULL,
+        citer_is_double_ended(original) ? citer_take_next_back : NULL,
 		citer_take_free_data,
 		size_bound
 	);

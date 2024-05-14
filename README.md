@@ -226,7 +226,7 @@ All names below are prefixed with the name `citer_` in the code to avoid clobber
 | reverse    | Y | Iterator which reverses a double-ended iterator.                                                                    |
 | skip       | I | Skips the first N items of another iterator.                                                                        |
 | skip_while | N | Skips the items of another iterator until a given predicate function returns false.                                 |
-| take       | N | Iterates over the first N items of another iterator.                                                                |
+| take       | E | Iterates over the first N items of another iterator.                                                                |
 | take_while | N | Iterates over items of another iterator until a given predicate function returns false.                             |
 | zip        | N | Zips two iterators together, returning pairs of items, one from each input iterator.                                |
 
