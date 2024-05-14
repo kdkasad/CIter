@@ -16,6 +16,7 @@
  * with CIter. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -34,7 +35,10 @@ int main(int argc, char *argv[]) {
     }
 
 	iterator_t *it = citer_take(citer_repeat(argv[1]), count);
-    char **arr = (char **) citer_collect_into_array(it);
+
+    size_t len;
+    char **arr = (char **) citer_collect_into_array(it, &len);
+    assert(len == count);
 
     printf("Generated array: [");
     for (unsigned long i = 0; i < count; i++) {
