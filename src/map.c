@@ -126,6 +126,7 @@ iterator_t *citer_flatten(iterator_t *orig) {
     *data = (citer_flatten_data_t) {
         .orig = orig,
         .cur = NULL,
+        .cur_back = NULL,
     };
 
     /* It is impossible for us to know the resulting number of items. Each item
