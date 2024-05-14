@@ -22,6 +22,9 @@
 #include <stdlib.h>
 
 bool citer_all(iterator_t *it, citer_predicate_t predicate, void *extra_data) {
+    if (citer_is_infinite(it))
+        /* TODO: Notify caller of error. */
+        return NULL;
     void *item;
     while ((item = citer_next(it))) {
         if (!predicate(item, extra_data))
@@ -40,6 +43,9 @@ bool citer_any(iterator_t *it, citer_predicate_t predicate, void *extra_data) {
 }
 
 void *citer_max(iterator_t *it, citer_cmp_fn_t cmp, void *extra_data) {
+    if (citer_is_infinite(it))
+        /* TODO: Notify caller of error. */
+        return NULL;
     void *max = NULL;
     void *cur;
     while ((cur = citer_next(it))) {
@@ -50,6 +56,9 @@ void *citer_max(iterator_t *it, citer_cmp_fn_t cmp, void *extra_data) {
 }
 
 void *citer_min(iterator_t *it, citer_cmp_fn_t cmp, void *extra_data) {
+    if (citer_is_infinite(it))
+        /* TODO: Notify caller of error. */
+        return NULL;
     void *min = NULL;
     void *cur;
     while ((cur = citer_next(it))) {

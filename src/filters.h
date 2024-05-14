@@ -52,6 +52,12 @@ typedef int (*citer_cmp_fn_t)(void *item1, void *item2, void *extra_data);
  *
  * The third argument is extra data to pass to the predicate. This is
  * user-defined and can be anything. It will not be touched by citer_all().
+ *
+ * This function only works for finite iterators. When the input iterator is
+ * guaranteed to be infinite, NULL is returned. When other infinite iterators
+ * are passed in, this function loops forever.
+ *
+ * This function exhausts the iterator, but does not free it.
  */
 bool citer_all(iterator_t *, citer_predicate_t, void *);
 
@@ -71,7 +77,11 @@ bool citer_any(iterator_t *, citer_predicate_t, void *);
  *
  * The third argument to this function is the extra data to be passed to the compare function.
  *
- * This function consumes the entire iterator but does not free it.
+ * This function exhausts the iterator but does not free it.
+ *
+ * This function only works for finite iterators. When the input iterator is
+ * guaranteed to be infinite, NULL is returned. When other infinite iterators
+ * are passed in, this function loops forever.
  */
 void *citer_min(iterator_t *it, citer_cmp_fn_t cmp, void *extra_data);
 
@@ -83,7 +93,11 @@ void *citer_min(iterator_t *it, citer_cmp_fn_t cmp, void *extra_data);
  *
  * The third argument to this function is the extra data to be passed to the compare function.
  *
- * This function consumes the entire iterator but does not free it.
+ * This function exhausts the iterator but does not free it.
+ *
+ * This function only works for finite iterators. When the input iterator is
+ * guaranteed to be infinite, NULL is returned. When other infinite iterators
+ * are passed in, this function loops forever.
  */
 void *citer_max(iterator_t *it, citer_cmp_fn_t cmp, void *extra_data);
 
