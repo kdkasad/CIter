@@ -29,6 +29,14 @@ iterator_t *citer_skip(iterator_t *, size_t);
 void *citer_nth(iterator_t *, size_t);
 
 /*
+ * Get the nth item from the back end of a double-ended iterator.
+ *
+ * This function requires a double-ended iterator. If the iterator is not
+ * double-ended, it will return NULL.
+ */
+void *citer_nth_back(iterator_t *, size_t);
+
+/*
  * Take elements from the iterator while the predicate is true.
  *
  * Similar to citer_filter(), but stops when the predicate returns false.

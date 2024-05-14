@@ -33,6 +33,13 @@ static void *citer_inspect_next(void *_data) {
     return item;
 }
 
+static void *citer_inspect_next_back(void *_data) {
+    citer_inspect_data_t *data = (citer_inspect_data_t *) _data;
+    void *item = citer_next_back(data->orig);
+    data->fn(item, data->fn_data);
+    return item;
+}
+
 static void citer_inspect_free_data(void *_data) {
     citer_inspect_data_t *data = (citer_inspect_data_t *) _data;
     citer_free(data->orig);
@@ -50,6 +57,7 @@ iterator_t *citer_inspect(iterator_t *orig, citer_inspect_fn_t fn, void *fn_data
     *it = (iterator_t) {
         .data = data,
         .next = citer_inspect_next,
+        .next_back = citer_is_double_ended(orig) ? citer_inspect_next_back : NULL,
         .free_data = citer_inspect_free_data
     };
     return it;

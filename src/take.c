@@ -21,6 +21,8 @@
 
 #include <stdlib.h>
 
+/* TODO: Once size reporting is implemented, make take double-ended. */
+
 typedef struct citer_take_data {
 	iterator_t *original;
 	size_t count;
@@ -52,6 +54,7 @@ iterator_t *citer_take(iterator_t *original, size_t count) {
 	*it = (iterator_t) {
 		.data = data,
 		.next = citer_take_next,
+        .next_back = NULL,
 		.free_data = citer_take_free_data,
 	};
 	return it;
@@ -66,6 +69,19 @@ static void *citer_skip_next(void *_data) {
 	return citer_next(data->original);
 }
 
+/* TODO: Once size reporting is implemented, make this O(1) for fixed-size
+ * iterators. */
+static void *citer_skip_next_back(void *_data) {
+	citer_take_data_t *data = (citer_take_data_t *) _data;
+	/* Skip items from the front, not the back. */
+	while (data->count > 0) {
+		data->count--;
+		citer_next(data->original);
+	}
+	/* Return the next item from the back. */
+	return citer_next_back(data->original);
+}
+
 iterator_t *citer_skip(iterator_t *original, size_t count) {
 	citer_take_data_t *data = malloc(sizeof(*data));
 	*data = (citer_take_data_t) {
@@ -76,6 +92,7 @@ iterator_t *citer_skip(iterator_t *original, size_t count) {
 	*it = (iterator_t) {
 		.data = data,
 		.next = citer_skip_next,
+        .next_back = citer_is_double_ended(original) ? citer_skip_next_back : NULL,
 		.free_data = citer_take_free_data,
 	};
 	return it;
@@ -87,6 +104,18 @@ void *citer_nth(iterator_t *it, size_t n) {
 		n--;
 	}
 	return citer_next(it);
+}
+
+void *citer_nth_back(iterator_t *it, size_t n) {
+	/* TODO: Notify caller of error. */
+	if (!citer_is_double_ended(it))
+		return NULL;
+
+	while (n) {
+		citer_next_back(it);
+		n--;
+	}
+	return citer_next_back(it);
 }
 
 typedef struct citer_take_while_data {
@@ -129,6 +158,7 @@ iterator_t *citer_take_while(iterator_t *orig, citer_predicate_t predicate, void
 	*it = (iterator_t) {
 		.data = data,
 		.next = citer_take_while_next,
+        .next_back = NULL,
 		.free_data = citer_take_while_free_data,
 	};
 	return it;
@@ -162,6 +192,7 @@ iterator_t *citer_skip_while(iterator_t *orig, citer_predicate_t predicate, void
 	*it = (iterator_t) {
 		.data = data,
 		.next = citer_skip_while_next,
+        .next_back = NULL,
 		.free_data = citer_take_while_free_data,
 	};
 	return it;

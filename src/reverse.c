@@ -16,21 +16,22 @@
  * with CIter. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef _CITER_REPEAT_H_
-#define _CITER_REPEAT_H_
+#include "reverse.h"
 
-#include "iterator.h"
+#include <stdlib.h>
 
-iterator_t *citer_repeat(void *);
+iterator_t *citer_reverse(iterator_t *orig) {
+    if (!citer_is_double_ended(orig))
+        return NULL;
 
-/*
- * Create an iterator that yields a single item.
- *
- * Parameters:
- *   item - The item to yield.
- *
- * The returned iterator must be freed after use with citer_free().
- */
-iterator_t *citer_once(void *);
-
-#endif /* _CITER_REPEAT_H_ */
+    /* Since we don't need to store extra data, we can just use the iterator as
+     * the data and use the normal next, next_back, and free functions. */
+    iterator_t *it = malloc(sizeof(*it));
+    *it = (iterator_t) {
+        .data = orig,
+        .next = (citer_next_fn) citer_next_back,
+        .next_back = (citer_next_fn) citer_next,
+        .free_data = (citer_free_data_fn) citer_free,
+    };
+    return it;
+}

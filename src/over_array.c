@@ -37,6 +37,16 @@ static void *citer_over_array_next(void *_data) {
 	}
 }
 
+static void *citer_over_array_next_back(void *_data) {
+	citer_over_array_data_t *data = (citer_over_array_data_t *) _data;
+	if (data->i < data->len) {
+		/* Cast to (char *) so pointer arithmetic is in terms of bytes. */
+		return (void *) (((char *) data->array) + (((data->len--) - 1) * data->itemsize));
+	} else {
+		return NULL;
+	}
+}
+
 void citer_over_array_free_data(void *_data) {
 	free(_data);
 }
@@ -54,6 +64,7 @@ iterator_t *citer_over_array(void *array, size_t itemsize, size_t len) {
 	*it = (iterator_t) {
 		.data = data,
 		.next = citer_over_array_next,
+        .next_back = citer_over_array_next_back,
 		.free_data = citer_over_array_free_data,
 	};
 	return it;

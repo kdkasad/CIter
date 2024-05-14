@@ -16,21 +16,25 @@
  * with CIter. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef _CITER_REPEAT_H_
-#define _CITER_REPEAT_H_
+#ifndef _CITER_REVERSE_H_
+#define _CITER_REVERSE_H_
+
+#include <stddef.h>
 
 #include "iterator.h"
 
-iterator_t *citer_repeat(void *);
-
 /*
- * Create an iterator that yields a single item.
+ * Reverse a double-ended iterator.
  *
- * Parameters:
- *   item - The item to yield.
+ * Returns a new iterator which iterates over the items of the input iterator in
+ * reverse.
  *
- * The returned iterator must be freed after use with citer_free().
+ * The input iterator must be double-ended. If it is not, this function will
+ * return NULL.
+ *
+ * The returned iterator must be freed after use with citer_free(). Doing so
+ * also frees the input iterator.
  */
-iterator_t *citer_once(void *);
+iterator_t *citer_reverse(iterator_t *);
 
-#endif /* _CITER_REPEAT_H_ */
+#endif /* _CITER_REVERSE_H_ */

@@ -37,7 +37,8 @@ MODULES = \
 	chunked \
 	collect \
 	inspect \
-	zip
+	zip \
+	reverse
 
 EXAMPLES = \
 	repeat_take \
@@ -53,7 +54,9 @@ EXAMPLES = \
 	sum \
 	inspect \
 	skip_take_while \
-	zip
+	zip \
+	reverse \
+	double_ended
 EXAMPLES_BIN = $(addprefix examples/,$(EXAMPLES))
 
 STATICLIB = lib$(NAME).a
