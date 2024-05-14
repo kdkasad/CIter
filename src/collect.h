@@ -34,14 +34,16 @@ typedef struct citer_llnode {
 /*
  * Collect items from an iterator into an array.
  *
- * Only call this function if you know the iterator is finite. If an infinite
- * iterator is passed in, this function will loop forever, likely until it runs
- * out of memory for the array.
+ * Only call this function if you know the iterator is finite. Will return NULL
+ * for iterators which are guaranteed to be infinite. For others, it will just
+ * loop until running out of memory.
  *
  * The second argument to this function is a pointer to a size_t variable that
  * will be set to the length of the returned array.
  *
- * The returned array will be dynamically allocated and must be freed after use.
+ * The returned array will be dynamically allocated and must be freed after use,
+ * even if the array is empty (i.e. the returned length is 0). The only
+ * exception is if the iterator passed in is guaranteed to be infinite.
  *
  * This function will consume all items in the iterator, but will not free the
  * iterator.
@@ -51,9 +53,9 @@ void **citer_collect_into_array(iterator_t *, size_t *);
 /*
  * Collect items from an iterator into a linked list.
  *
- * Only call this function if you know the iterator is finite. If an infinite
- * iterator is passed in, this function will loop forever, likely until it runs
- * out of memory for the list.
+ * Only call this function if you know the iterator is finite. Will return NULL
+ * for iterators which are guaranteed to be infinite. For others, it will just
+ * loop until running out of memory.
  *
  * The second argument to this function is a pointer to the location at which to
  * store the pointer to the tail node in the returned list. If this argument is
