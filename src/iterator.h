@@ -115,6 +115,17 @@ size_t citer_count(iterator_t *);
 #define citer_has_exact_size(it) (citer_bound_is_exact((it)->size_bound))
 
 /*
+ * Whether an iterator is guaranteed to be finite.
+ *
+ * Returns 1 if and only if neither bound is infinite.
+ *
+ * It is possible for an iterator to be finite even when this macro returns 0.
+ * This macro checks whether an iterator is guaranteed to be finite, not whether
+ * it is possible.
+ */
+#define citer_is_finite(it) (!(it)->size_bound.lower_infinite && !(it)->size_bound.upper_infinite)
+
+/*
  * Whether an iterator is guaranteed to be infinite.
  *
  * Returns 1 if and only if the iterator's lower size bound is infinite.

@@ -249,7 +249,8 @@ I: Inherited (i.e. double-ended if all input iterators are double-ended)
 | free_data  | Frees the data associated with an iterator, but not the iterator structure itself.    |
 | has_exact_size  | Returns true if and only if an iterator has an exact size.                       |
 | is_double_ended | Checks if an iterator is double-ended.                                           |
-| is_infinite     | Returns true if and only if the iterator is guaranteed to return an infinite number of items. This has a caveat which is documented in a comment in `citer.h`. |
+| is_finite     | Returns true if and only if the iterator is guaranteed to return an finite number of items. This has a caveat which is documented in a comment in `src/iterator.h` (or `citer.h`). |
+| is_infinite     | Returns true if and only if the iterator is guaranteed to return an infinite number of items. This has a caveat which is documented in a comment in `src/iterator.h` (or `citer.h`). |
 | max        | Returns the maximum item of an iterator, comparing using a given comparison function. |
 | min        | Returns the minimum item of an iterator, comparing using a given comparison function. |
 | next       | Returns the next item of the iterator.                                                |
