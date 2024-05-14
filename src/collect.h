@@ -38,12 +38,15 @@ typedef struct citer_llnode {
  * iterator is passed in, this function will loop forever, likely until it runs
  * out of memory for the array.
  *
+ * The second argument to this function is a pointer to a size_t variable that
+ * will be set to the length of the returned array.
+ *
  * The returned array will be dynamically allocated and must be freed after use.
  *
  * This function will consume all items in the iterator, but will not free the
  * iterator.
  */
-void **citer_collect_into_array(iterator_t *);
+void **citer_collect_into_array(iterator_t *, size_t *);
 
 /*
  * Collect items from an iterator into a linked list.
@@ -52,12 +55,16 @@ void **citer_collect_into_array(iterator_t *);
  * iterator is passed in, this function will loop forever, likely until it runs
  * out of memory for the list.
  *
+ * The second argument to this function is a pointer to the location at which to
+ * store the pointer to the tail node in the returned list. If this argument is
+ * NULL, it will not be set.
+ *
  * Each node in the returned list will be dynamically allocated and must be
  * freed after use.
  *
  * This function will consume all items in the iterator, but will not free the
  * iterator.
  */
-citer_llnode_t *citer_collect_into_linked_list(iterator_t *);
+citer_llnode_t *citer_collect_into_linked_list(iterator_t *, citer_llnode_t **);
 
 #endif /* _CITER_COLLECT_H_ */
