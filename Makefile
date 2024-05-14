@@ -55,7 +55,8 @@ EXAMPLES = \
 	inspect \
 	skip_take_while \
 	zip \
-	reverse
+	reverse \
+	double_ended
 EXAMPLES_BIN = $(addprefix examples/,$(EXAMPLES))
 
 STATICLIB = lib$(NAME).a
