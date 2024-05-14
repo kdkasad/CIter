@@ -21,7 +21,9 @@
 
 #include <citer.h>
 
-static void *parse_num(void *item) {
+static void *parse_num(void *item, void *fn_data) {
+    (void) fn_data; /* Mark as unused. */
+
     char *str = *((char **) item);
     unsigned long num;
     if (sscanf(str, "%lu", &num) != 1) {
@@ -39,8 +41,9 @@ static void inspect_fn(void *item, void *step) {
     printf("%s: %lu\n", step_str, num);
 }
 
-static void *add_two(void *item) {
-    return (void *) (((unsigned long) item) + 2);
+static void *add(void *item, void *fn_data) {
+    unsigned long inc = (unsigned long) fn_data;
+    return (void *) (((unsigned long) item) + inc);
 }
 
 static void *sum_accumulator(void *item, void *data) {
@@ -54,9 +57,9 @@ int main(int argc, char *argv[]) {
 	}
 
     iterator_t *it = citer_over_array(argv + 1, sizeof(*argv), argc - 1);
-    it = citer_map(it, parse_num);
+    it = citer_map(it, parse_num, NULL);
     it = citer_inspect(it, inspect_fn, "Before adding two");
-    it = citer_map(it, add_two);
+    it = citer_map(it, add, (void *) 2ul);
     it = citer_inspect(it, inspect_fn, "After adding two");
     unsigned long sum = (unsigned long) citer_fold(it, sum_accumulator, (void *) 0);
 

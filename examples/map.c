@@ -21,7 +21,8 @@
 
 #include <citer.h>
 
-static void *map_int_times2(void *_item) {
+static void *map_int_times2(void *_item, void *fn_data) {
+	(void) fn_data; /* Mark as unused. */
     int item = *((int *) _item);
     return (void *) (long) (item * 2);
 }
@@ -44,7 +45,7 @@ int main(int argc, char *argv[]) {
     }
 
 	iterator_t *it = citer_over_array(int_arr, sizeof(*int_arr), len);
-    it = citer_map(it, map_int_times2);
+    it = citer_map(it, map_int_times2, NULL);
 
 	int item;
 	unsigned long count = 0;

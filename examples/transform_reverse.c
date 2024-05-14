@@ -23,7 +23,8 @@
 
 #include <citer.h>
 
-static void *map_deref(void *item) {
+static void *map_deref(void *item, void *fn_data) {
+    (void) fn_data; /* Mark unused. */
     return (void *) *((void **) item);
 }
 
@@ -66,8 +67,8 @@ int main(int argc, char *argv[]) {
         size_t chunksize = 3;
 
 start_chunked:;
-        iterator_t *it1 = citer_chunked(citer_map(citer_over_array(items, sizeof(*items), len), map_deref), chunksize);
-        iterator_t *it2 = citer_reverse(citer_chunked(citer_map(citer_over_array(items, sizeof(*items), len), map_deref), chunksize));
+        iterator_t *it1 = citer_chunked(citer_map(citer_over_array(items, sizeof(*items), len), map_deref, NULL), chunksize);
+        iterator_t *it2 = citer_reverse(citer_chunked(citer_map(citer_over_array(items, sizeof(*items), len), map_deref, NULL), chunksize));
 
         size_t n_chunks;
         char ***arr = (char ***) citer_collect_into_array(it1, &n_chunks);

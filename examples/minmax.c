@@ -21,7 +21,8 @@
 
 #include <citer.h>
 
-void *deref_int_ptr(void *item) {
+void *deref_int_ptr(void *item, void *fn_data) {
+    (void) fn_data; /* Mark as unused. */
     return (void *) (long) (*((int *) item));
 }
 
@@ -48,8 +49,8 @@ int main(int argc, char *argv[]) {
         int_arr[i - 1] = num;
     }
 
-	iterator_t *it1 = citer_map(citer_over_array(int_arr, sizeof(*int_arr), len), deref_int_ptr);
-	iterator_t *it2 = citer_map(citer_over_array(int_arr, sizeof(*int_arr), len), deref_int_ptr);
+	iterator_t *it1 = citer_map(citer_over_array(int_arr, sizeof(*int_arr), len), deref_int_ptr, NULL);
+	iterator_t *it2 = citer_map(citer_over_array(int_arr, sizeof(*int_arr), len), deref_int_ptr, NULL);
 
     printf("Min: %d\n", (int) (long) citer_min(it1, (citer_cmp_fn_t) cmp, NULL));
     printf("Max: %d\n", (int) (long) citer_max(it2, (citer_cmp_fn_t) cmp, NULL));

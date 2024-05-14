@@ -25,6 +25,7 @@ static void *citer_repeat_next(iterator_t *self) {
 }
 
 static void citer_repeat_free_data(void *data) {
+	(void) data; /* Mark unused. */
 	return;
 }
 

@@ -21,7 +21,8 @@
 
 #include <citer.h>
 
-static void *map_deref(void *item) {
+static void *map_deref(void *item, void *fn_data) {
+    (void) fn_data; /* Mark as unused */
     return *((void **) item);
 }
 
@@ -38,7 +39,7 @@ int main(int argc, char *argv[]) {
     }
 
 	iterator_t *it = citer_over_array(argv + 2, sizeof(*argv), argc - 2);
-    it = citer_map(it, map_deref);
+    it = citer_map(it, map_deref, NULL);
     it = citer_chunked(it,  chunksize);
 
     char **chunk;

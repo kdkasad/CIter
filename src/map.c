@@ -22,21 +22,22 @@
 
 typedef struct citer_map_data {
     iterator_t *orig;
-    void *(*fn)(void *);
+    citer_map_fn_t fn;
+    void *fn_data;
 } citer_map_data_t;
 
 static void *citer_map_next(iterator_t *self) {
     citer_bound_sub(self->size_bound, 1);
     citer_map_data_t *data = (citer_map_data_t *) self->data;
     void *next = citer_next(data->orig);
-    return next ? data->fn(next) : NULL;
+    return next ? data->fn(next, data->fn_data) : NULL;
 }
 
 static void *citer_map_next_back(iterator_t *self) {
     citer_bound_sub(self->size_bound, 1);
     citer_map_data_t *data = (citer_map_data_t *) self->data;
     void *next = citer_next_back(data->orig);
-    return next ? data->fn(next) : NULL;
+    return next ? data->fn(next, data->fn_data) : NULL;
 }
 
 static void citer_map_free_data(void *_data) {
@@ -45,9 +46,30 @@ static void citer_map_free_data(void *_data) {
     free(data);
 }
 
-iterator_t *citer_map(iterator_t *orig, citer_map_fn_t fn) {
+/*
+ * Map each item of an iterator using a given function.
+ *
+ * Parameters:
+ *   orig - The source iterator to map.
+ *   fn - The function to apply to each item. This function should take two
+ *        arguments: the first is the item to be processed, and the second is
+ *        custom data which can be used by the function.
+ *   fn_data - Custom data to be passed as the second argument to the mapping
+ *             function. This data can be anything (or nothing); it is up to
+ *             the user.
+ *
+ * Returns a new iterator which yields the result of the mapping function for
+ * each input item. This iterator must be freed after use using citer_free().
+ * Freeing this iterator will free the source iterator as well, but not the
+ * fn_data argument.
+ */
+iterator_t *citer_map(iterator_t *orig, citer_map_fn_t fn, void *fn_data) {
     citer_map_data_t *data = malloc(sizeof(*data));
-    *data = (citer_map_data_t) { .orig = orig, .fn = fn };
+    *data = (citer_map_data_t) {
+        .orig = orig,
+        .fn = fn,
+        .fn_data = fn_data,
+    };
     return citer_new(
         data,
         citer_map_next,
