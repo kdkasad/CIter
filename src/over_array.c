@@ -77,6 +77,7 @@ iterator_t *citer_over_array(void *array, size_t itemsize, size_t len) {
 
 	return citer_new(
 		data,
+        sizeof(*data),
 		citer_over_array_next,
 		citer_over_array_next_back,
 		citer_over_array_free_data,

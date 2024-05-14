@@ -76,6 +76,7 @@ iterator_t *citer_chain(iterator_t *first, iterator_t *second) {
 
 	return citer_new(
 		data,
+		sizeof(*data),
 		citer_chain_next,
 		(citer_is_double_ended(first) && citer_is_double_ended(second)) ? citer_chain_next_back : NULL,
 		citer_chain_free_data,

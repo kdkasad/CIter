@@ -82,6 +82,7 @@ iterator_t *citer_zip(iterator_t *first, iterator_t *second) {
 
 	return citer_new(
 		data,
+        sizeof(*data),
 		citer_zip_next,
         NULL,
 		citer_zip_free_data,

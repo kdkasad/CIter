@@ -64,6 +64,7 @@ iterator_t *citer_take(iterator_t *original, size_t count) {
 
 	return citer_new(
 		data,
+        sizeof(*data),
 		citer_take_next,
         NULL,
 		citer_take_free_data,
@@ -107,6 +108,7 @@ iterator_t *citer_skip(iterator_t *original, size_t count) {
 
 	return citer_new(
 		data,
+        sizeof(*data),
 		citer_skip_next,
         citer_is_double_ended(original) ? citer_skip_next_back : NULL,
 		citer_take_free_data,
@@ -182,6 +184,7 @@ iterator_t *citer_take_while(iterator_t *orig, citer_predicate_t predicate, void
 
 	return citer_new(
 		data,
+        sizeof(*data),
 		citer_take_while_next,
         NULL,
 		citer_take_while_free_data,
@@ -229,6 +232,7 @@ iterator_t *citer_skip_while(iterator_t *orig, citer_predicate_t predicate, void
 
 	return citer_new(
 		data,
+        sizeof(*data),
 		citer_skip_while_next,
         NULL,
 		citer_take_free_data,

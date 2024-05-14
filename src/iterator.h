@@ -43,7 +43,9 @@ typedef void (*citer_free_data_fn)(void *);
  * Iterator structure
  *
  * Fields:
- *   data - Opaque data for this iterator_t
+ *   data - Opaque data for this iterator_t.
+ *   data_size - The size of the data in bytes. Used for cloning. 0 acts as a
+ *               special value; see citer_clone() for details.
  *   next - A method that takes a pointer to this iterator_t's data and returns
  *          the next item.
  *   next_back - A method that takes a pointer to this iterator_t's data and
@@ -55,6 +57,7 @@ typedef void (*citer_free_data_fn)(void *);
 struct iterator_t {
 	citer_size_bound_t size_bound;
 	void *data;
+	size_t data_size;
 	citer_next_fn next;
 	citer_next_fn next_back;
 	citer_free_data_fn free_data;
@@ -65,6 +68,7 @@ struct iterator_t {
  */
 void *citer_new(
 	void *data,
+	size_t data_size,
 	citer_next_fn next,
 	citer_next_fn next_back,
 	citer_free_data_fn free_data,
@@ -90,6 +94,25 @@ void citer_free_data(iterator_t *);
  * Free a heap-allocated iterator.
  */
 void citer_free(iterator_t *);
+
+/*
+ * Clone an iterator.
+ *
+ * This function will return a new iterator which is an exact copy of the
+ * original.
+ *
+ * If the original iterator has a data_size of 0, only the data pointer will be
+ * copied to the new iterator. If data_size > 0, the a copy of the data will be
+ * made and stored in the new iterator.
+ *
+ * Note that even though the data is copied, if the data contains a pointer to
+ * other data, that data will not be copied. This may affect, for example,
+ * citer_filter(), if state is being stored in the extra predicate data. Or if
+ * there was an iterator which read data from a file pointer, its clone would
+ * still hold the same file pointer, so the two iterators would not yield the
+ * same items.
+ */
+iterator_t *citer_clone(const iterator_t *);
 
 /*
  * Check if an iterator is double-ended.

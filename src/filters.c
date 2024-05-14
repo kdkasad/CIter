@@ -118,6 +118,7 @@ iterator_t *citer_filter(iterator_t *orig, citer_predicate_t predicate, void *ex
 
     return citer_new(
         data,
+        sizeof(*data),
         citer_filter_next,
         citer_is_double_ended(orig) ? citer_filter_next_back : NULL,
         citer_filter_free_data,

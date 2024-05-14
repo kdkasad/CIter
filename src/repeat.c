@@ -37,6 +37,7 @@ iterator_t *citer_repeat(void *item) {
 	};
 	return citer_new(
 		item,
+        0,
 		citer_repeat_next,
 		citer_repeat_next,
 		citer_repeat_free_data,
@@ -65,6 +66,7 @@ iterator_t *citer_once(void *item) {
 
 	return citer_new(
 		item,
+		0,
 		citer_once_next,
 		citer_once_next,
 		free,

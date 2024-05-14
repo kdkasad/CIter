@@ -55,6 +55,7 @@ iterator_t *citer_enumerate(iterator_t *orig) {
     };
     return citer_new(
         data,
+        sizeof(*data),
         citer_enumerate_next,
         NULL,
         citer_enumerate_free_data,

@@ -176,6 +176,7 @@ typedef void (*citer_free_data_fn)(void *data);
 typedef struct iterator_t {
     citer_size_bound_t size_bound;
     void *data;
+    size_t data_size;
     citer_next_fn next;
     citer_next_fn next_back;
     citer_free_data_fn free_data;
@@ -184,6 +185,11 @@ typedef struct iterator_t {
 
 The `data` field can be anything you want.
 It is stored in the iterator and can be accessed by the iterator's functions in order to store state.
+
+The `data_size` field stores the size (in bytes) of the object pointed to by the `data` field.
+This is used when cloning the iterator.
+The value `0` is a special value which indicates that the data should not be copied when cloning the iterator.
+Instead, the same pointer to the original data is stored in the new iterator.
 
 The `next` function should return the next item of this iterator, or `NULL` if the iterator is exhausted.
 The only argument is a pointer to the iterator structure, just like the `self` parameter in Python and Rust.
@@ -241,8 +247,9 @@ I: Inherited (i.e. double-ended if all input iterators are double-ended)
 | ---        | ---                                                                                   |
 | all        | Returns true if all items of an iterator satisfy a given predicate function.          |
 | any        | Returns true if any items of an iterator satisfy a given predicate function.          |
-| collect_into_array       | Collects the items of an iterator into an array.                                      |
-| collect_into_linked_list | Collects the items of an iterator into a linked list.                                 |
+| clone      | Clones an iterator and its data. Has some caveats; see the function documentation comment in `src/iterator.h` (or `citer.h`) for details. |
+| collect_into_array       | Collects the items of an iterator into an array.                        |
+| collect_into_linked_list | Collects the items of an iterator into a linked list.                   |
 | count      | Counts the number of items in an iterator.                                            |
 | find       | Returns the first item of an iterator satisfying a given predicate function.          |
 | fold       | Accumulate all items of an iterator into a single value using a given function.       |

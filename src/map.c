@@ -50,6 +50,7 @@ iterator_t *citer_map(iterator_t *orig, citer_map_fn_t fn) {
     *data = (citer_map_data_t) { .orig = orig, .fn = fn };
     return citer_new(
         data,
+        sizeof(*data),
         citer_map_next,
         citer_is_double_ended(orig) ? citer_map_next_back : NULL,
         citer_map_free_data,
@@ -135,6 +136,7 @@ iterator_t *citer_flatten(iterator_t *orig) {
 
     return citer_new(
         data,
+        sizeof(*data),
         citer_flatten_next,
         citer_is_double_ended(orig) ? citer_flatten_next_back : NULL,
         citer_flatten_free_data,

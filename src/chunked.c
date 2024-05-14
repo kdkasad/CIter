@@ -64,6 +64,7 @@ iterator_t *citer_chunked(iterator_t *orig, size_t chunksize) {
     };
     return citer_new(
         data,
+        sizeof(*data),
         citer_chunked_next,
         NULL,
         citer_chunked_free_data,
