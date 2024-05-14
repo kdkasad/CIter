@@ -22,8 +22,6 @@
 
 #define CEIL_DIV(a, b) (((a) + (b) - 1) / (b))
 
-/* TODO: Once size reporting is implemented, make chunked double-ended. */
-
 typedef struct citer_chunked_data {
     iterator_t *orig;
     size_t chunksize;
@@ -42,6 +40,31 @@ static void *citer_chunked_next(iterator_t *self) {
     chunk[0] = first;
     for (size_t i = 1; i < data->chunksize; i++) {
         chunk[i] = citer_next(data->orig);
+    }
+    return chunk;
+}
+
+/*
+ * Double-endedness is only implemented for exact-size sources, so we can freely
+ * use the source's size_bound as the source length here.
+ */
+static void *citer_chunked_next_back(iterator_t *self) {
+    citer_chunked_data_t *data = (citer_chunked_data_t *) self->data;
+
+    size_t len = data->orig->size_bound.upper;
+    if (len == 0)
+        return NULL;
+
+    size_t n_in_last = len % data->chunksize;
+    if (n_in_last == 0)
+        n_in_last = data->chunksize;
+
+    void **chunk = malloc(data->chunksize * sizeof(*chunk));
+    for (int i = n_in_last - 1; i >= 0; i--) {
+        chunk[i] = citer_next_back(data->orig);
+    }
+    for (int i = n_in_last; i < data->chunksize; i++) {
+        chunk[i] = NULL;
     }
     return chunk;
 }
@@ -65,7 +88,7 @@ iterator_t *citer_chunked(iterator_t *orig, size_t chunksize) {
     return citer_new(
         data,
         citer_chunked_next,
-        NULL,
+        citer_has_exact_size(orig) ? citer_chunked_next_back : NULL,
         citer_chunked_free_data,
         (citer_size_bound_t) {
             .lower = CEIL_DIV(orig->size_bound.lower, chunksize),

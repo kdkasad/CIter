@@ -23,32 +23,77 @@
 
 #include <citer.h>
 
+static void *map_deref(void *item) {
+    return (void *) *((void **) item);
+}
+
 int main(int argc, char *argv[]) {
     if (argc != 1) {
         fprintf(stderr, "Usage: %s\n", argv[0]);
         return 1;
     }
 
-    char *items[] = { "A", "B", "C", "D", "E", "F", "G" };
-    size_t len = sizeof(items) / sizeof(*items);
-    iterator_t *it1, *it2;
 
     /* Enumerate reverse */
-    it1 = citer_enumerate(citer_over_array(items, sizeof(*items), len));
-    it2 = citer_reverse(citer_enumerate(citer_over_array(items, sizeof(*items), len)));
-    citer_enumerate_item_t *arr = malloc(len * sizeof(*arr));
-    for (int i = 0; i < len; i++) {
-        memcpy(arr + i, (citer_enumerate_item_t *) citer_next(it1), sizeof(*arr));
+    {
+        char *items[] = { "A", "B", "C", "D", "E", "F", "G" };
+        size_t len = sizeof(items) / sizeof(*items);
+
+        iterator_t *it1 = citer_enumerate(citer_over_array(items, sizeof(*items), len));
+        iterator_t *it2 = citer_reverse(citer_enumerate(citer_over_array(items, sizeof(*items), len)));
+
+        citer_enumerate_item_t *arr = malloc(len * sizeof(*arr));
+        for (int i = 0; i < len; i++) {
+            memcpy(arr + i, (citer_enumerate_item_t *) citer_next(it1), sizeof(*arr));
+        }
+        citer_free(it1);
+
+        for (int i = len - 1; i >= 0; i--) {
+            citer_enumerate_item_t *pair = (citer_enumerate_item_t *) citer_next(it2);
+            printf("Got: (%lu, %s)\n", pair->index, *((char **) pair->item));
+            assert(!memcmp(arr + i, pair, sizeof(*arr)));
+        }
+
+        citer_free(it2);
+        free(arr);
+        printf("\n");
     }
-    citer_free(it1);
-    for (int i = len - 1; i >= 0; i--) {
-        citer_enumerate_item_t *pair = (citer_enumerate_item_t *) citer_next(it2);
-        printf("Got: (%lu, %s)\n", pair->index, *((char **) pair->item));
-        assert(arr[i].index == pair->index);
-        assert(*((char **) arr[i].item) == *((char **) pair->item));
+
+    /* Chunked reverse */
+    {
+        char *items[] = { "A", "B", "C", "D", "E", "F", "G", "H" };
+        size_t len = sizeof(items) / sizeof(*items);
+        size_t chunksize = 3;
+
+start_chunked:;
+        iterator_t *it1 = citer_chunked(citer_map(citer_over_array(items, sizeof(*items), len), map_deref), chunksize);
+        iterator_t *it2 = citer_reverse(citer_chunked(citer_map(citer_over_array(items, sizeof(*items), len), map_deref), chunksize));
+
+        size_t n_chunks;
+        char ***arr = (char ***) citer_collect_into_array(it1, &n_chunks);
+        citer_free(it1);
+
+        for (int i = n_chunks - 1; i >= 0; i--) {
+            char **chunk = (char **) citer_next(it2);
+            printf("Got: [");
+            for (int j = 0; j < chunksize; j++) {
+                printf("%s%s", chunk[j], j == chunksize - 1 ? "" : ", ");
+            }
+            printf("]\n");
+            assert(!memcmp(arr[i], chunk, sizeof(*chunk) * chunksize));
+            free(arr[i]);
+            free(chunk);
+        }
+
+        citer_free(it2);
+        free(arr);
+        printf("\n");
+
+        if (chunksize == 3) {
+            chunksize = 2;
+            goto start_chunked;
+        }
     }
-    citer_free(it2);
-    free(arr);
 
     return 0;
 }

@@ -212,7 +212,7 @@ All names below are prefixed with the name `citer_` in the code to avoid clobber
 | Iterator   | Double-ended | Description                                                                                              |
 | ---        | --- | ---                                                                                                               |
 | chain      | I | Chains two iterators. Iterates over all items of the first, then all items of the second.                           |
-| chunked    | N | Iterates over N-item chunks of an iterator at a time.                                                               |
+| chunked    | E | Iterates over N-item chunks of an iterator at a time.                                                               |
 | empty      | Y | Empty iterator. Always yields `NULL`.                                                                               |
 | enumerate  | E | Enumerates the items of an iterator. Each new item is a `citer_enumerate_item_t` containing the index and the item. |
 | filter     | I | Filters items of an iterator using a predicate function.                                                            |
