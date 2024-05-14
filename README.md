@@ -144,9 +144,9 @@ The size bound is a structure defined as follows:
 
 ```c
 typedef struct citer_size_bound {
-	size_t lower;
-	size_t upper;
-	bool lower_infinite: 1;
+    size_t lower;
+    size_t upper;
+    bool lower_infinite: 1;
     bool upper_infinite: 1;
 } citer_size_bound_t;
 ```
@@ -176,9 +176,9 @@ typedef void (*citer_free_data_fn)(void *);
 typedef struct iterator_t {
     citer_size_bound_t size_bound;
     void *data;
-	citer_next_fn next;
-	citer_next_fn next_back;
-	citer_free_data_fn free_data;
+    citer_next_fn next;
+    citer_next_fn next_back;
+    citer_free_data_fn free_data;
 } iterator_t;
 ```
 
