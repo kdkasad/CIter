@@ -18,6 +18,7 @@
 
 #include "chain.h"
 
+#include <stdint.h>
 #include <stdlib.h>
 
 typedef struct citer_chain_data {
