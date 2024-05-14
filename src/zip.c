@@ -102,7 +102,7 @@ iterator_t *citer_zip(iterator_t *first, iterator_t *second) {
 	return citer_new(
 		data,
 		citer_zip_next,
-        (citer_has_exact_size(first) && citer_has_exact_size(second)) ? citer_zip_next_back : NULL,
+        (CITER_HEDE(first) && CITER_HEDE(second)) ? citer_zip_next_back : NULL,
 		citer_zip_free_data,
 		size_bound
 	);

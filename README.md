@@ -234,7 +234,7 @@ All names below are prefixed with the name `citer_` in the code to avoid clobber
  - Y: Yes,
  - N: No,
  - I: Inherited (i.e. double-ended if all input iterators are double-ended),
- - E: Inherited for exact-size source iterators only.
+ - E: Inherited, but also requires all sources to be exact-sized.
 
 ### Functions
 

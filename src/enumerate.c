@@ -69,7 +69,7 @@ iterator_t *citer_enumerate(iterator_t *orig) {
     return citer_new(
         data,
         citer_enumerate_next,
-        citer_has_exact_size(orig) ? citer_enumerate_next_back : NULL,
+        CITER_HEDE(orig) ? citer_enumerate_next_back : NULL,
         citer_enumerate_free_data,
         orig->size_bound
     );

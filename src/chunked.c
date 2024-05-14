@@ -88,7 +88,7 @@ iterator_t *citer_chunked(iterator_t *orig, size_t chunksize) {
     return citer_new(
         data,
         citer_chunked_next,
-        citer_has_exact_size(orig) ? citer_chunked_next_back : NULL,
+        CITER_HEDE(orig) ? citer_chunked_next_back : NULL,
         citer_chunked_free_data,
         (citer_size_bound_t) {
             .lower = CEIL_DIV(orig->size_bound.lower, chunksize),

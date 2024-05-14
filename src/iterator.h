@@ -136,4 +136,9 @@ size_t citer_count(iterator_t *);
  */
 #define citer_is_infinite(it) (!!(it)->size_bound.lower_infinite)
 
+/*
+ * Check if an iterator has an exact size and is double-ended.
+ */
+#define CITER_HEDE(it) (citer_has_exact_size(it) && citer_is_double_ended(it))
+
 #endif /* _CITER_ITERATOR_H_ */
