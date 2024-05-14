@@ -81,3 +81,19 @@ iterator_t *citer_once(void *item) {
 		size_bound
 	);
 }
+
+/*
+ * Create an empty iterator.
+ *
+ * The returned iterator must be freed after use with citer_free().
+ */
+iterator_t *citer_empty(void) {
+	iterator_t *it = citer_repeat(NULL);
+	it->size_bound = (citer_size_bound_t) {
+		.lower = 0,
+		.upper = 0,
+		.lower_infinite = false,
+		.upper_infinite = false
+	};
+	return it;
+}

@@ -33,4 +33,11 @@ iterator_t *citer_repeat(void *);
  */
 iterator_t *citer_once(void *);
 
+/*
+ * Create an empty iterator.
+ *
+ * The returned iterator must be freed after use with citer_free().
+ */
+iterator_t *citer_empty(void);
+
 #endif /* _CITER_REPEAT_H_ */

@@ -209,10 +209,11 @@ All names below are prefixed with the name `citer_` in the code to avoid clobber
 
 ### Iterators
 
-| Iterator   | Double-ended | Description                                                                                                         |
-| ---        | --- | ---                                                                                                                 |
+| Iterator   | Double-ended | Description                                                                                              |
+| ---        | --- | ---                                                                                                               |
 | chain      | I | Chains two iterators. Iterates over all items of the first, then all items of the second.                           |
 | chunked    | N | Iterates over N-item chunks of an iterator at a time.                                                               |
+| empty      | Y | Empty iterator. Always yields `NULL`.                                                                               |
 | enumerate  | N | Enumerates the items of an iterator. Each new item is a `citer_enumerate_item_t` containing the index and the item. |
 | filter     | I | Filters items of an iterator using a predicate function.                                                            |
 | flat_map   | I | Maps each item of an iterator to an iterator, then iterates over the items of each result iterator consecutively. Equivalent to `citer_flatten(citer_map(it, fn))`. |
