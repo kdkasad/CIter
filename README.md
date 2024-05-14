@@ -43,7 +43,7 @@ Don't worry though; it's easy!
 
 Simply run `make` in the root directory of the repository.
 
-This will build three notable files: `citer.h`, `libciter.a`, and `libciter.so.0.1.0`.
+This will build three notable files: `citer.h`, `libciter.a`, and `libciter.so.0.2.0`.
 
 The examples in the `examples/` directory will also be built.
 Those can be run to test CIter's features.
@@ -60,8 +60,8 @@ To install to a different location, run `make PREFIX=/path/to/install/into insta
 Running `make install` will:
  - install `citer.h` as `$(PREFIX)/include/citer.h`;
  - install `libciter.a` as `$(PREFIX)/lib/libciter.a`;
- - install `libciter.so.0.1.0` as `$(PREFIX)/lib/libciter.so.0.1.0`;
- - create symbolic links `libciter.so` and `libciter.so.0` to `libciter.so.0.1.0` in `$(PREFIX)/lib`.
+ - install `libciter.so.0.2.0` as `$(PREFIX)/lib/libciter.so.0.2.0`;
+ - create symbolic links `libciter.so` and `libciter.so.0` to `libciter.so.0.2.0` in `$(PREFIX)/lib`.
 
 ### Uninstalling
 
