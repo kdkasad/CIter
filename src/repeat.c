@@ -44,28 +44,18 @@ iterator_t *citer_repeat(void *item) {
 	);
 }
 
-/* We must use a struct so we can change the value of the item pointer from the
- * next(_back)? function. */
-typedef struct citer_once_data {
-	void *item;
-} citer_once_data_t;
-
 static void *citer_once_next(iterator_t *self) {
-	citer_once_data_t *data = (citer_once_data_t *) self->data;
 	void *item = NULL;
-	if (data->item) {
+	if (self->data) {
 		self->size_bound.lower = 0;
 		self->size_bound.upper = 0;
-		item = data->item;
-		data->item = NULL;
+		item = self->data;
+		self->data = NULL;
 	}
 	return item;
 }
 
 iterator_t *citer_once(void *item) {
-	citer_once_data_t *data = malloc(sizeof(*data));
-	data->item = item;
-
 	citer_size_bound_t size_bound = {
 		.lower = 1,
 		.upper = 1,
@@ -74,7 +64,7 @@ iterator_t *citer_once(void *item) {
 	};
 
 	return citer_new(
-		data,
+		item,
 		citer_once_next,
 		citer_once_next,
 		free,
