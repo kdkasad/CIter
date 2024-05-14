@@ -111,5 +111,19 @@ start_chunked:;
         citer_free(it);
     }
 
+    /* Skip reverse */
+    {
+        unsigned long items[] = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+        size_t len = sizeof(items) / sizeof(*items);
+
+        iterator_t *it = citer_reverse(citer_skip(citer_over_array(items, sizeof(*items), len), 5));
+        assert(citer_next(it) == &items[8]);
+        assert(citer_next_back(it) == &items[5]);
+        assert(citer_next(it) == &items[7]);
+        assert(citer_next(it) == &items[6]);
+        assert(citer_next(it) == NULL);
+        citer_free(it);
+    }
+
     return 0;
 }
