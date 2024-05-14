@@ -177,7 +177,9 @@ static void *citer_take_while_next(iterator_t *self) {
 		return item;
 	} else {
 		data->done = 1;
+		self->size_bound.lower = 0;
 		self->size_bound.upper = 0;
+		self->size_bound.lower_infinite = false;
 		self->size_bound.upper_infinite = false;
 		return NULL;
 	}
@@ -214,8 +216,7 @@ iterator_t *citer_take_while(iterator_t *orig, citer_predicate_t predicate, void
 static void *citer_skip_while_next(iterator_t *self) {
 	citer_take_while_data_t *data = (citer_take_while_data_t *) self->data;
 
-	/* Only decrease the upper bound because the lower bound is 0. */
-	self->size_bound.upper--;
+	citer_bound_sub(self->size_bound, 1);
 
 	if (data->done)
 		return citer_next(data->orig);
