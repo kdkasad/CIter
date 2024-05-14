@@ -19,7 +19,7 @@
 PREFIX = /usr/local
 
 NAME = citer
-VERSION = 0.1.0
+VERSION = 0.2.0
 LICENSE_HEADER_LENGTH = 18
 
 # Order matters here. The "iterator" module must come first, so that when
@@ -58,6 +58,7 @@ EXAMPLES = \
 	skip_take_while \
 	zip \
 	reverse \
+	double_ended \
 	transform_reverse
 EXAMPLES_BIN = $(addprefix examples/,$(EXAMPLES))
 
