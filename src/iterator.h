@@ -64,7 +64,8 @@ void *citer_new(
 	void *data,
 	citer_next_fn next,
 	citer_next_fn next_back,
-	citer_free_data_fn free_data
+	citer_free_data_fn free_data,
+	citer_size_bound_t size_bound
 );
 
 /*

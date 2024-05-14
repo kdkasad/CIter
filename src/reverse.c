@@ -30,6 +30,7 @@ iterator_t *citer_reverse(iterator_t *orig) {
         orig,
         (citer_next_fn) citer_next_back,
         (citer_next_fn) citer_next,
-        (citer_free_data_fn) citer_free
+        (citer_free_data_fn) citer_free,
+        orig->size_bound
      );
 }

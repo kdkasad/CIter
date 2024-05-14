@@ -57,10 +57,25 @@ iterator_t *citer_chain(iterator_t *first, iterator_t *second) {
 		.first = first,
 		.second = second,
 	};
+
+	citer_size_bound_t size_bound = first->size_bound;
+	size_bound.lower_infinite = first->size_bound.lower_infinite | second->size_bound.lower_infinite;
+	size_bound.upper_infinite = first->size_bound.upper_infinite | second->size_bound.upper_infinite;
+	if (first->size_bound.lower > SIZE_MAX - second->size_bound.lower)
+		size_bound.lower_infinite = true;
+	else
+		size_bound.lower = first->size_bound.lower + second->size_bound.lower;
+	if (first->size_bound.upper > SIZE_MAX - second->size_bound.upper)
+		size_bound.upper_infinite = true;
+	else
+		size_bound.upper = first->size_bound.upper + second->size_bound.upper;
+
+
 	return citer_new(
 		data,
 		citer_chain_next,
 		(citer_is_double_ended(first) && citer_is_double_ended(second)) ? citer_chain_next_back : NULL,
-		citer_chain_free_data
+		citer_chain_free_data,
+		size_bound
 	);
 }

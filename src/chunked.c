@@ -20,6 +20,8 @@
 
 #include <stdlib.h>
 
+#define CEIL_DIV(a, b) (((a) + (b) - 1) / (b))
+
 /* TODO: Once size reporting is implemented, make chunked double-ended. */
 
 typedef struct citer_chunked_data {
@@ -62,6 +64,12 @@ iterator_t *citer_chunked(iterator_t *orig, size_t chunksize) {
         data,
         citer_chunked_next,
         NULL,
-        citer_chunked_free_data
+        citer_chunked_free_data,
+        (citer_size_bound_t) {
+            .lower = CEIL_DIV(orig->size_bound.lower, chunksize),
+            .upper = CEIL_DIV(orig->size_bound.upper, chunksize),
+            .lower_infinite = orig->size_bound.lower_infinite,
+            .upper_infinite = orig->size_bound.upper_infinite,
+        }
     );
 }

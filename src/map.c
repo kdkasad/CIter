@@ -17,7 +17,6 @@
  */
 
 #include "map.h"
-#include "iterator.h"
 
 #include <stdlib.h>
 
@@ -51,7 +50,8 @@ iterator_t *citer_map(iterator_t *orig, citer_map_fn_t fn) {
         data,
         citer_map_next,
         citer_is_double_ended(orig) ? citer_map_next_back : NULL,
-        citer_map_free_data
+        citer_map_free_data,
+        orig->size_bound
     );
 }
 
@@ -123,11 +123,17 @@ iterator_t *citer_flatten(iterator_t *orig) {
         .orig = orig,
         .cur = NULL,
     };
+
+    /* It is impossible for us to know the resulting number of items. Each item
+     * in the input could be an empty iterator or an infinite one. */
+    citer_size_bound_t size_bound = CITER_DEFAULT_SIZE_BOUND;
+
     return citer_new(
         data,
         citer_flatten_next,
         citer_is_double_ended(orig) ? citer_flatten_next_back : NULL,
-        citer_flatten_free_data
+        citer_flatten_free_data,
+        size_bound
     );
 }
 

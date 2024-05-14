@@ -60,10 +60,18 @@ iterator_t *citer_over_array(void *array, size_t itemsize, size_t len) {
 		.i = 0,
 	};
 
+	citer_size_bound_t size_bound = {
+		.lower = len,
+		.upper = len,
+		.lower_infinite = false,
+		.upper_infinite = false,
+	};
+
 	return citer_new(
 		data,
 		citer_over_array_next,
 		citer_over_array_next_back,
-		citer_over_array_free_data
+		citer_over_array_free_data,
+		size_bound
 	);
 }

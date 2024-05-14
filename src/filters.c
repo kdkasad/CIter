@@ -106,10 +106,17 @@ iterator_t *citer_filter(iterator_t *orig, citer_predicate_t predicate, void *ex
         .predicate = predicate,
         .predicate_data = extra_data,
     };
+
+    /* When filtering, the upper bound does not change. The lower bound is 0. */
+    citer_size_bound_t size_bound = orig->size_bound;
+    size_bound.lower = 0;
+    size_bound.lower_infinite = false;
+
     return citer_new(
         data,
         citer_filter_next,
         citer_is_double_ended(orig) ? citer_filter_next_back : NULL,
-        citer_filter_free_data
+        citer_filter_free_data,
+        size_bound
     );
 }

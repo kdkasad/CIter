@@ -28,10 +28,12 @@ void *citer_new(
 	void *data,
 	citer_next_fn next,
 	citer_next_fn next_back,
-	citer_free_data_fn free_data
+	citer_free_data_fn free_data,
+	citer_size_bound_t size_bound
 ) {
 	iterator_t *it = malloc(sizeof((*it)));
 	*it = (iterator_t) {
+		.size_bound = size_bound,
 		.data = data,
 		.next = next,
 		.next_back = next_back,

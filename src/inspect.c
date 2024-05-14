@@ -57,6 +57,7 @@ iterator_t *citer_inspect(iterator_t *orig, citer_inspect_fn_t fn, void *fn_data
         data,
         citer_inspect_next,
         citer_is_double_ended(orig) ? citer_inspect_next_back : NULL,
-        citer_inspect_free_data
+        citer_inspect_free_data,
+        orig->size_bound
     );
 }

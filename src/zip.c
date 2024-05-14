@@ -56,10 +56,33 @@ iterator_t *citer_zip(iterator_t *first, iterator_t *second) {
 		.first = first,
 		.second = second,
 	};
+
+	/* Both limits are the minimum of the two inputs' bounds. */
+	citer_size_bound_t size_bound;
+	if (first->size_bound.lower_infinite && second->size_bound.lower_infinite) {
+		size_bound.lower_infinite = true;
+	} else if (first->size_bound.lower_infinite) {
+		size_bound.lower_infinite = false;
+		size_bound.lower = second->size_bound.lower;
+	} else {
+		size_bound.lower_infinite = false;
+		size_bound.lower = first->size_bound.lower;
+	}
+	if (first->size_bound.upper_infinite && second->size_bound.upper_infinite) {
+		size_bound.upper_infinite = true;
+	} else if (first->size_bound.upper_infinite) {
+		size_bound.upper_infinite = false;
+		size_bound.upper = second->size_bound.upper;
+	} else {
+		size_bound.upper_infinite = false;
+		size_bound.upper = first->size_bound.upper;
+	}
+
 	return citer_new(
 		data,
 		citer_zip_next,
         NULL,
-		citer_zip_free_data
+		citer_zip_free_data,
+		size_bound
 	);
 }

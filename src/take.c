@@ -49,11 +49,24 @@ iterator_t *citer_take(iterator_t *original, size_t count) {
 		.original = original,
 		.count = count,
 	};
+
+	citer_size_bound_t size_bound = {
+		.lower = count,
+		.upper = count,
+		.lower_infinite = false,
+		.upper_infinite = false
+	};
+	if (!original->size_bound.lower_infinite && (original->size_bound.lower < count))
+		size_bound.lower = original->size_bound.lower;
+	if (!original->size_bound.upper_infinite && (original->size_bound.upper < count))
+		size_bound.upper = original->size_bound.upper;
+
 	return citer_new(
 		data,
 		citer_take_next,
         NULL,
-		citer_take_free_data
+		citer_take_free_data,
+		size_bound
 	);
 }
 
@@ -85,11 +98,16 @@ iterator_t *citer_skip(iterator_t *original, size_t count) {
 		.original = original,
 		.count = count,
 	};
+
+	citer_size_bound_t size_bound = original->size_bound;
+	citer_bound_sub(size_bound, count);
+
 	return citer_new(
 		data,
 		citer_skip_next,
         citer_is_double_ended(original) ? citer_skip_next_back : NULL,
-		citer_take_free_data
+		citer_take_free_data,
+		size_bound
 	);
 }
 
@@ -149,11 +167,17 @@ iterator_t *citer_take_while(iterator_t *orig, citer_predicate_t predicate, void
 		.extra_data = extra_data,
 		.done = 0,
 	};
+
+	citer_size_bound_t size_bound = orig->size_bound;
+	size_bound.lower = 0;
+	size_bound.lower_infinite = false;
+
 	return citer_new(
 		data,
 		citer_take_while_next,
         NULL,
-		citer_take_while_free_data
+		citer_take_while_free_data,
+		size_bound
 	);
 }
 
@@ -181,10 +205,16 @@ iterator_t *citer_skip_while(iterator_t *orig, citer_predicate_t predicate, void
 		.extra_data = extra_data,
 		.done = 0,
 	};
+
+	citer_size_bound_t size_bound = orig->size_bound;
+	size_bound.lower = 0;
+	size_bound.lower_infinite = false;
+
 	return citer_new(
 		data,
 		citer_skip_while_next,
         NULL,
-		citer_take_free_data
+		citer_take_free_data,
+		size_bound
 	);
 }

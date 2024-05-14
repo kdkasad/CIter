@@ -29,11 +29,18 @@ static void citer_repeat_free_data(void *data) {
 }
 
 iterator_t *citer_repeat(void *item) {
+	citer_size_bound_t size_bound = {
+		.lower = 0,
+		.upper = 0,
+		.lower_infinite = true,
+		.upper_infinite = true
+	};
 	return citer_new(
 		item,
 		citer_repeat_next,
 		citer_repeat_next,
-		citer_repeat_free_data
+		citer_repeat_free_data,
+		size_bound
 	);
 }
 
@@ -56,10 +63,19 @@ static void *citer_once_next(void *_data) {
 iterator_t *citer_once(void *item) {
 	citer_once_data_t *data = malloc(sizeof(*data));
 	data->item = item;
+
+	citer_size_bound_t size_bound = {
+		.lower = 1,
+		.upper = 1,
+		.lower_infinite = false,
+		.upper_infinite = false
+	};
+
 	return citer_new(
 		data,
 		citer_once_next,
 		citer_once_next,
-		free
+		free,
+		size_bound
 	);
 }
