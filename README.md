@@ -157,9 +157,19 @@ If a limit is infinite, the corresponding size is ignored.
 The size bound must be correct, but does not need to be exact.
 I.e. an iterator cannot return fewer items than the lower bound, nor more items than the upper bound.
 Consequently, the bound $[0, \infty)$ is valid for any iterator.
+For finite iterators, every time the `next` or `next_back` functions are called,
+the size bound should be updated.
 
 An iterator is considered to have an exact size, i.e. be an exact-sized iterator,
 if and only if the lower and upper bounds are equal and neither is finite.
+
+If an iterator is exact-sized, it must stay exact-sized. An iterator which is
+exact-sized cannot change its size bounds to no longer be exact-sized.
+
+However, this is the only restriction on changing size bounds. Some iterators do
+change size bounds (other than just decrementing). For example, the `skip_while`
+iterator changes its lower bound from 0 to the source's lower bound when the
+predicate returns false.
 
 ### Implementing your own iterators
 
