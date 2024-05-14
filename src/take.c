@@ -93,10 +93,20 @@ static void *citer_skip_next(iterator_t *self) {
 	return citer_next(data->original);
 }
 
-/* TODO: Once size reporting is implemented, make this O(1) for fixed-size
- * iterators. */
 static void *citer_skip_next_back(iterator_t *self) {
 	citer_take_data_t *data = (citer_take_data_t *) self->data;
+
+	/* For exact-size sources, we can just return items as long as the source
+	 * length > skip count. */
+	if (citer_has_exact_size(data->original)) {
+		if (data->original->size_bound.upper > data->count) {
+			citer_bound_sub(self->size_bound, 1);
+			return citer_next_back(data->original);
+		} else {
+			return NULL;
+		}
+	}
+
 	/* Skip items from the front, not the back. */
 	while (data->count > 0) {
 		data->count--;
