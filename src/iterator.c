@@ -79,12 +79,18 @@ void citer_free(iterator_t *it) {
 /*
  * Count the number of items in an iterator.
  *
- * Only works for finite iterators. Calling this function on an infinite
- * iterator will result in an infinite loop.
+ * Only works for finite iterators. Will return SIZE_MAX for iterators which are
+ * guaranteed to be finite. Otherwise will result in an infinite loop.
  *
- * This function will consume the iterator, but will not free it.
+ * This function may consume the iterator, but will not free it.
  */
 size_t citer_count(iterator_t *it) {
+	if (citer_has_exact_size(it))
+		return it->size_bound.upper;
+	else if (citer_is_infinite(it))
+		/* TODO: Notify caller of error */
+		return SIZE_MAX;
+
 	size_t count = 0;
 	while (citer_next(it))
 		count++;
