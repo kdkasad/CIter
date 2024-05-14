@@ -20,7 +20,7 @@
 
 #include <stdlib.h>
 
-void **citer_collect_into_array(iterator_t *it) {
+void **citer_collect_into_array(iterator_t *it, size_t *len_out) {
 #define INITIAL_LEN 10
 
     size_t len = INITIAL_LEN;
@@ -44,12 +44,13 @@ void **citer_collect_into_array(iterator_t *it) {
         res[used++] = item;
     }
 
+    *len_out = used;
     return res;
 
 #undef INITIAL_LEN
 }
 
-citer_llnode_t *citer_collect_into_linked_list(iterator_t *it) {
+citer_llnode_t *citer_collect_into_linked_list(iterator_t *it, citer_llnode_t **tail_out) {
     citer_llnode_t *head = NULL;
     citer_llnode_t *tail = NULL;
 
@@ -78,5 +79,7 @@ citer_llnode_t *citer_collect_into_linked_list(iterator_t *it) {
         }
     }
 
+    if (tail_out)
+        *tail_out = tail;
     return head;
 }
