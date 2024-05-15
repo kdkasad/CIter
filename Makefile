@@ -84,7 +84,7 @@ else
 endif
 
 .PHONY: all
-all: $(STATICLIB) $(DYLIB).$(VERSION) $(HEADER) examples tests
+all: $(STATICLIB) $(DYLIB).$(VERSION) $(HEADER)
 
 .PHONY: help
 help: TGT = @printf '    %-24s %s\n'
