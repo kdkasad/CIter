@@ -62,7 +62,8 @@ EXAMPLES_BIN = $(addprefix examples/,$(EXAMPLES))
 
 TESTS = \
 	collect \
-	transform_reverse
+	transform_reverse \
+	fuzz_size_bounds
 TESTS_BIN = $(addprefix tests/,$(TESTS))
 TESTS_REPORTS = $(addsuffix .out,$(TESTS_BIN))
 
