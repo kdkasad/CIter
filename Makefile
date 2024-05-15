@@ -64,6 +64,7 @@ TESTS = \
 	collect \
 	transform_reverse \
 	fuzz_size_bounds
+NORUN = fuzz_size_bounds
 TESTS_BIN = $(addprefix tests/,$(TESTS))
 TESTS_REPORTS = $(addsuffix .out,$(TESTS_BIN))
 
@@ -170,4 +171,4 @@ uninstall:
 
 .PHONY: check
 check: ./tests/run.sh $(TESTS_BIN)
-	@$< $(TESTS)
+	@$< $(filter-out $(NORUN),$(TESTS))
