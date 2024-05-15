@@ -29,8 +29,6 @@
 
 #define UNUSED(x) ((void) (x))
 
-#define LIMIT 131072 // 131072 = 128 KiB to B
-
 
 typedef iterator_t *(*constructor_t)();
 
@@ -58,7 +56,7 @@ static bool predicate_random(void *item, void *fn_data);
 static void *map_noop(void *item, void *fn_data);
 static iterator_t *random_chain(size_t maxlen, char **str_out);
 static long randomnz(long max);
-static unsigned long urandomnz(unsigned long max);
+// static unsigned long urandomnz(unsigned long max);
 
 
 static struct malloc_entry *malloc_entries_head;
@@ -212,7 +210,7 @@ static iterator_t *random_chain(size_t maxlen, char **str_out) {
         it = citer_repeat((void *) num);
     } else if (fn == citer_over_array) {
         long *arr;
-        size_t len = ((size_t) random()) % (LIMIT / sizeof(*arr));
+        size_t len = random() % 1024;
         arr = malloc(len * sizeof(*arr));
         for (int i = 0; i < len; i++)
             arr[i] = i + 1;
@@ -230,7 +228,7 @@ static iterator_t *random_chain(size_t maxlen, char **str_out) {
     } else if (fn == citer_chunked) {
         char *src_str;
         iterator_t *src = random_chain(maxlen - 1, &src_str);
-        size_t chunksize = urandomnz(citer_is_finite(src) ? src->size_bound.upper_infinite : LIMIT / sizeof(void *));
+        size_t chunksize = random() % 1024;
         asprintf(str_out, "citer_chunked(%s, %lu)", src_str, chunksize);
         free(src_str);
         it = citer_chunked(src, chunksize);
@@ -274,7 +272,7 @@ static iterator_t *random_chain(size_t maxlen, char **str_out) {
     } else if (fn == citer_skip) {
         char *src_str;
         iterator_t *src = random_chain(maxlen - 1, &src_str);
-        size_t count = random() % LIMIT;
+        size_t count = random();
         asprintf(str_out, "citer_skip(%s, %lu)", src_str, count);
         free(src_str);
         it = citer_skip(src, count);
@@ -287,7 +285,7 @@ static iterator_t *random_chain(size_t maxlen, char **str_out) {
     } else if (fn == citer_take) {
         char *src_str;
         iterator_t *src = random_chain(maxlen - 1, &src_str);
-        size_t count = random() % LIMIT;
+        size_t count = random();
         asprintf(str_out, "citer_take(%s, %lu)", src_str, count);
         free(src_str);
         it = citer_take(src, count);
@@ -329,6 +327,7 @@ static long randomnz(long modulus) {
     return x == 0 ? 1 : x;
 }
 
+#if 0
 /*
  * Unsigned random non-zero
  */
@@ -338,6 +337,7 @@ static unsigned long urandomnz(unsigned long modulus) {
         x %= modulus;
     return x == 0 ? 1 : x;
 }
+#endif
 
 int main(int argc, char *argv[]) {
     if (argc > 2) {
@@ -345,7 +345,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    size_t max_iterations;
+    size_t max_iterations = 250;
     if ((argc >= 2) && (sscanf(argv[1], "%lu", &max_iterations) != 1)) {
         max_iterations = 250;
     }
@@ -357,6 +357,7 @@ int main(int argc, char *argv[]) {
     assert(signal(SIGINT, interrupt_handler) != SIG_ERR);
 
     size_t iterations = 0;
+    fprintf(stderr, "MAX ITER %lu\n", max_iterations);
     while (running && (iterations < max_iterations)) {
         clock_t clock_start;
         char *chain_str;
