@@ -41,12 +41,12 @@ Don't worry though; it's easy!
 
 ### Building
 
-Simply run `make` in the root directory of the repository.
+Simply run `make` in the root directory of the repository to build CIter.
 
-This will build three notable files: `citer.h`, `libciter.a`, and `libciter.so.0.2.0`.
+This will create (among others) three notable files:
+`citer.h`, `libciter.a`, and `libciter.so.0.2.0`.
 
-The examples in the `examples/` directory will also be built.
-Those can be run to test CIter's features.
+Run `make help` to get a list of other useful build targets.
 
 ### Installing
 

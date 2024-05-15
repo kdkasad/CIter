@@ -86,6 +86,23 @@ endif
 .PHONY: all
 all: $(STATICLIB) $(DYLIB).$(VERSION) $(HEADER) examples tests
 
+.PHONY: help
+help: TGT = @printf '    %-24s %s\n'
+help:
+	@echo Available targets:
+	$(TGT) help "Print this help message"
+	$(TGT) all "Build header file and libraries"
+	$(TGT) examples "Build examples"
+	$(TGT) tests "Build tests"
+	$(TGT) clean "Clean all build outputs and artifacts"
+	$(TGT) clean-examples "Clean only examples"
+	$(TGT) clean-tests "Clean only tests"
+	$(TGT) check "Run tests"
+	$(TGT) install "Install header file and libraries to system"
+	$(TGT) uninstall "Reverse effects of 'install'"
+	@echo
+	@echo 'Set DBG=1 compile with debug symbols (make DBG=1 ...)'
+
 .PHONY: examples
 examples: $(EXAMPLES_BIN)
 
