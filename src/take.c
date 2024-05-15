@@ -77,7 +77,7 @@ iterator_t *citer_take(iterator_t *original, size_t count) {
 	return citer_new(
 		data,
 		citer_take_next,
-        citer_is_double_ended(original) ? citer_take_next_back : NULL,
+        CITER_HEDE(original) ? citer_take_next_back : NULL,
 		citer_take_free_data,
 		size_bound
 	);
