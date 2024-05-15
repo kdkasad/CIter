@@ -29,3 +29,7 @@ lib*.so.?.?.?
 !/examples/*.c
 !/examples/*.h
 !/examples/*.sh
+
+/tests/*
+!/tests/*.*
+/tests/*.out

@@ -36,7 +36,6 @@ run ./map 1 2 3 4
 run ./chunked 3 {1..20}
 run ./filter 2 1 2 3 4 5 6 7 8 9 10
 run ./minmax {1..50}
-run ./collect
 run ./count_using_fold {a..z}
 run ./sum {1..5}
 run ./inspect {1..5}
@@ -44,4 +43,3 @@ run ./skip_take_while {1..100}
 run ./zip {1..5} {a..e}
 run ./reverse {a..f}
 run ./double_ended
-run ./transform_reverse

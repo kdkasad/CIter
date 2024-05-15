@@ -51,16 +51,20 @@ EXAMPLES = \
 	enumerate \
 	minmax \
 	chunked \
-	collect \
 	count_using_fold \
 	sum \
 	inspect \
 	skip_take_while \
 	zip \
 	reverse \
-	double_ended \
-	transform_reverse
+	double_ended
 EXAMPLES_BIN = $(addprefix examples/,$(EXAMPLES))
+
+TESTS = \
+	collect \
+	transform_reverse
+TESTS_BIN = $(addprefix tests/,$(TESTS))
+TESTS_REPORTS = $(addsuffix .out,$(TESTS_BIN))
 
 STATICLIB = lib$(NAME).a
 DYLIB = lib$(NAME).so
@@ -80,19 +84,27 @@ else
 endif
 
 .PHONY: all
-all: $(STATICLIB) $(DYLIB).$(VERSION) $(HEADER) examples
+all: $(STATICLIB) $(DYLIB).$(VERSION) $(HEADER) examples tests
 
 .PHONY: examples
 examples: $(EXAMPLES_BIN)
 
+.PHONY: tests
+tests: $(TESTS_BIN)
+
 .PHONY: clean
-clean: | clean-examples
+clean: | clean-examples clean-tests
 	rm -f $(OBJS) $(STATICLIB) $(HEADER) $(DYLIB) $(DYLIB).$(VERSION) $(SONAME)
 	rm -fd build
 
 .PHONY: clean-examples
 clean-examples:
 	rm -f $(EXAMPLES_BIN)
+
+.PHONY: clean-tests
+clean-tests:
+	rm -f $(TESTS_BIN)
+	rm -f $(TESTS_REPORTS)
 
 $(STATICLIB): $(OBJS)
 	ar crs $@ $^
@@ -103,9 +115,9 @@ build:
 $(OBJS): build/%.o: src/%.c $(HEADER) | build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 
-$(EXAMPLES_BIN): LDFLAGS += -L.
-$(EXAMPLES_BIN): LDLIBS += -l$(NAME)
-$(EXAMPLES_BIN): examples/%: examples/%.c $(STATICLIB)
+$(EXAMPLES_BIN) $(TESTS_BIN): LDFLAGS += -L.
+$(EXAMPLES_BIN) $(TESTS_BIN): LDLIBS += -l$(NAME)
+$(EXAMPLES_BIN) $(TESTS_BIN): %: %.c $(STATICLIB)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $< $(LDFLAGS) $(LDLIBS)
 
 $(HEADER): $(patsubst %,src/%.h,$(MODULES))
@@ -139,5 +151,5 @@ uninstall:
 	if command -v ldconfig >/dev/null 2>&1; then ldconfig; fi
 
 .PHONY: check
-check: $(EXAMPLES_BIN)
-	./examples/run_all.sh
+check: ./tests/run.sh $(TESTS_BIN)
+	@$< $(TESTS)
