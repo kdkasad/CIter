@@ -16,6 +16,8 @@
  * with CIter. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#define _GNU_SOURCE
+
 #include <assert.h>
 #include <dlfcn.h>
 #include <signal.h>
