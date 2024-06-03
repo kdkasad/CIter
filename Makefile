@@ -58,22 +58,23 @@ EXAMPLES = \
 	zip \
 	reverse \
 	double_ended
-EXAMPLES_BIN = $(addprefix examples/,$(EXAMPLES))
 
 TESTS = \
 	collect \
-	transform_reverse
-TESTS_BIN = $(addprefix tests/,$(TESTS))
-TESTS_REPORTS = $(addsuffix .out,$(TESTS_BIN))
+	transform_reverse \
+	fuzz_size_bounds
+NORUN = fuzz_size_bounds
 
 STATICLIB = lib$(NAME).a
 DYLIB = lib$(NAME).so
 HEADER = $(NAME).h
 OBJS = $(patsubst %,build/%.o,$(filter-out $(HEADERONLY),$(MODULES)))
 SONAME = $(DYLIB).$(firstword $(subst ., ,$(VERSION)))
+EXAMPLES_BIN = $(addprefix examples/,$(EXAMPLES))
+TESTS_BIN = $(addprefix tests/,$(TESTS))
+TESTS_REPORTS = $(addsuffix .out,$(TESTS_BIN))
 
-CFLAGS = -Wall -Werror -std=c99 -fPIC
-CPPFLAGS = -I.
+CFLAGS = -Wall -Werror -std=c99
 
 ifneq ($(DBG),)
 # Debugging flags
@@ -109,6 +110,9 @@ examples: $(EXAMPLES_BIN)
 .PHONY: tests
 tests: $(TESTS_BIN)
 
+# tests/fuzz_size_bounds requires some non-standard functions
+tests/fuzz_size_bounds: CFLAGS := $(filter-out -std=c99,$(CFLAGS)) -Wno-unused-result
+
 .PHONY: clean
 clean: | clean-examples clean-tests
 	rm -f $(OBJS) $(STATICLIB) $(HEADER) $(DYLIB) $(DYLIB).$(VERSION) $(SONAME)
@@ -129,9 +133,11 @@ $(STATICLIB): $(OBJS)
 build:
 	mkdir -p build
 
+$(OBJS): CFLAGS += -fPIC
 $(OBJS): build/%.o: src/%.c $(HEADER) | build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 
+$(EXAMPLES_BIN) $(TESTS_BIN): CPPFLAGS += -I.
 $(EXAMPLES_BIN) $(TESTS_BIN): LDFLAGS += -L.
 $(EXAMPLES_BIN) $(TESTS_BIN): LDLIBS += -l$(NAME)
 $(EXAMPLES_BIN) $(TESTS_BIN): %: %.c $(STATICLIB)
@@ -168,5 +174,5 @@ uninstall:
 	if command -v ldconfig >/dev/null 2>&1; then ldconfig; fi
 
 .PHONY: check
-check: ./tests/run.sh $(TESTS_BIN)
-	@$< $(TESTS)
+check: ./tests/run.sh tests
+	@$< $(filter-out $(NORUN),$(TESTS))
