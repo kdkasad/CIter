@@ -23,7 +23,8 @@
 
 #define UNUSED(x) ((void) (x))
 
-static void *map_deref(void *item) {
+static void *map_deref(void *item, void *fn_data) {
+    (void) fn_data; /* Mark as unused. */
     return *((void **) item);
 }
 
@@ -59,7 +60,7 @@ int main(int argc, char *argv[]) {
      */
 
     it = citer_over_array(arr, sizeof(*arr), sizeof(arr) / sizeof(*arr));
-    it = citer_map(it, map_deref);
+    it = citer_map(it, map_deref, NULL);
     it = citer_chain(it, citer_flatten(citer_once(citer_once((void *) 6ul))));
     it = citer_inspect(it, print_item, "Before map");
     it = citer_filter(it, is_even, NULL);

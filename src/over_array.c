@@ -27,9 +27,13 @@ typedef struct citer_over_array_data {
 	size_t i;
 } citer_over_array_data_t;
 
-static void *citer_over_array_next(void *_data) {
-	citer_over_array_data_t *data = (citer_over_array_data_t *) _data;
+static void *citer_over_array_next(iterator_t *self) {
+	citer_over_array_data_t *data = (citer_over_array_data_t *) self->data;
 	if (data->i < data->len) {
+		/* Don't use citer_bound_sub() because we know that the bounds are
+		 * non-zero if there's another item to return. */
+		self->size_bound.lower--;
+		self->size_bound.upper--;
 		/* Cast to (char *) so pointer arithmetic is in terms of bytes. */
 		return (void *) (((char *) data->array) + (data->i++ * data->itemsize));
 	} else {
@@ -37,9 +41,13 @@ static void *citer_over_array_next(void *_data) {
 	}
 }
 
-static void *citer_over_array_next_back(void *_data) {
-	citer_over_array_data_t *data = (citer_over_array_data_t *) _data;
+static void *citer_over_array_next_back(iterator_t *self) {
+	citer_over_array_data_t *data = (citer_over_array_data_t *) self->data;
 	if (data->i < data->len) {
+		/* Don't use citer_bound_sub() because we know that the bounds are
+		 * non-zero if there's another item to return. */
+		self->size_bound.lower--;
+		self->size_bound.upper--;
 		/* Cast to (char *) so pointer arithmetic is in terms of bytes. */
 		return (void *) (((char *) data->array) + (((data->len--) - 1) * data->itemsize));
 	} else {
@@ -60,12 +68,18 @@ iterator_t *citer_over_array(void *array, size_t itemsize, size_t len) {
 		.i = 0,
 	};
 
-	iterator_t *it = malloc(sizeof(*it));
-	*it = (iterator_t) {
-		.data = data,
-		.next = citer_over_array_next,
-        .next_back = citer_over_array_next_back,
-		.free_data = citer_over_array_free_data,
+	citer_size_bound_t size_bound = {
+		.lower = len,
+		.upper = len,
+		.lower_infinite = false,
+		.upper_infinite = false,
 	};
-	return it;
+
+	return citer_new(
+		data,
+		citer_over_array_next,
+		citer_over_array_next_back,
+		citer_over_array_free_data,
+		size_bound
+	);
 }

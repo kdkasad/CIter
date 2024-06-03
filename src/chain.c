@@ -18,6 +18,7 @@
 
 #include "chain.h"
 
+#include <stdint.h>
 #include <stdlib.h>
 
 typedef struct citer_chain_data {
@@ -25,8 +26,9 @@ typedef struct citer_chain_data {
 	iterator_t *second;
 } citer_chain_data_t;
 
-static void *citer_chain_next(void *_data) {
-	citer_chain_data_t *data = (citer_chain_data_t *) _data;;
+static void *citer_chain_next(iterator_t *self) {
+	citer_chain_data_t *data = (citer_chain_data_t *) self->data;
+	citer_bound_sub(self->size_bound, 1);
 	void *item;
 	if ((item = citer_next(data->first)))
 		return item;
@@ -34,8 +36,9 @@ static void *citer_chain_next(void *_data) {
 		return citer_next(data->second);
 }
 
-static void *citer_chain_next_back(void *_data) {
-	citer_chain_data_t *data = (citer_chain_data_t *) _data;;
+static void *citer_chain_next_back(iterator_t *self) {
+	citer_chain_data_t *data = (citer_chain_data_t *) self->data;
+	citer_bound_sub(self->size_bound, 1);
 	void *item;
 	if ((item = citer_next_back(data->second)))
 		return item;
@@ -57,17 +60,25 @@ iterator_t *citer_chain(iterator_t *first, iterator_t *second) {
 		.first = first,
 		.second = second,
 	};
-	iterator_t *it = malloc(sizeof(*it));
-	*it = (iterator_t) {
-		.data = data,
-		.next = citer_chain_next,
-		.next_back = NULL,
-		.free_data = citer_chain_free_data,
-	};
 
-	/* Make chain double-ended if both inputs are. */
-	if (first->next_back && second->next_back)
-		it->next_back = citer_chain_next_back;
+	citer_size_bound_t size_bound = first->size_bound;
+	size_bound.lower_infinite = first->size_bound.lower_infinite | second->size_bound.lower_infinite;
+	size_bound.upper_infinite = first->size_bound.upper_infinite | second->size_bound.upper_infinite;
+	if (first->size_bound.lower > SIZE_MAX - second->size_bound.lower)
+		size_bound.lower_infinite = true;
+	else
+		size_bound.lower = first->size_bound.lower + second->size_bound.lower;
+	if (first->size_bound.upper > SIZE_MAX - second->size_bound.upper)
+		size_bound.upper_infinite = true;
+	else
+		size_bound.upper = first->size_bound.upper + second->size_bound.upper;
 
-	return it;
+
+	return citer_new(
+		data,
+		citer_chain_next,
+		(citer_is_double_ended(first) && citer_is_double_ended(second)) ? citer_chain_next_back : NULL,
+		citer_chain_free_data,
+		size_bound
+	);
 }

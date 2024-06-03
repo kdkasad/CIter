@@ -22,18 +22,39 @@
 #include <stdlib.h>
 
 /*
+ * Create a new iterator.
+ */
+void *citer_new(
+	void *data,
+	citer_next_fn next,
+	citer_next_fn next_back,
+	citer_free_data_fn free_data,
+	citer_size_bound_t size_bound
+) {
+	iterator_t *it = malloc(sizeof((*it)));
+	*it = (iterator_t) {
+		.size_bound = size_bound,
+		.data = data,
+		.next = next,
+		.next_back = next_back,
+		.free_data = free_data,
+	};
+	return it;
+}
+
+/*
  * Get the next item from an iterator_t.
  */
 void *citer_next(iterator_t *it) {
-	return it->next(it->data);
+	return it->next(it);
 }
 
 /*
  * Get the next item from the back of a double-ended iterator.
  */
 void *citer_next_back(iterator_t *it) {
-	if (it->next_back)
-		return it->next_back(it->data);
+	if (citer_is_double_ended(it))
+		return it->next_back(it);
 	else
 		/* TODO: Notify caller of error. */
 		return NULL;
@@ -58,12 +79,18 @@ void citer_free(iterator_t *it) {
 /*
  * Count the number of items in an iterator.
  *
- * Only works for finite iterators. Calling this function on an infinite
- * iterator will result in an infinite loop.
+ * Only works for finite iterators. Will return SIZE_MAX for iterators which are
+ * guaranteed to be finite. Otherwise will result in an infinite loop.
  *
- * This function will consume the iterator, but will not free it.
+ * This function may consume the iterator, but will not free it.
  */
 size_t citer_count(iterator_t *it) {
+	if (citer_has_exact_size(it))
+		return it->size_bound.upper;
+	else if (citer_is_infinite(it))
+		/* TODO: Notify caller of error */
+		return SIZE_MAX;
+
 	size_t count = 0;
 	while (citer_next(it))
 		count++;

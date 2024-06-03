@@ -22,11 +22,16 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "size.h"
+
+/* Forward declaration for use in the function typedefs below. */
+typedef struct iterator_t iterator_t;
+
 /*
  * Function type for getting the next item from an iterator.
  * Used for both iterator_t::next() and iterator_t::next_back().
  */
-typedef void *(*citer_next_fn)(void *);
+typedef void *(*citer_next_fn)(iterator_t *);
 
 /*
  * Function type for freeing an iterator's data.
@@ -47,12 +52,24 @@ typedef void (*citer_free_data_fn)(void *);
  *   free_data - A method that takes a pointer to this iterator_t's data and
  *               frees (de-allocates) said data.
  */
-typedef struct iterator_t {
+struct iterator_t {
+	citer_size_bound_t size_bound;
 	void *data;
 	citer_next_fn next;
 	citer_next_fn next_back;
 	citer_free_data_fn free_data;
-} iterator_t;
+};
+
+/*
+ * Create a new iterator.
+ */
+void *citer_new(
+	void *data,
+	citer_next_fn next,
+	citer_next_fn next_back,
+	citer_free_data_fn free_data,
+	citer_size_bound_t size_bound
+);
 
 /*
  * Get the next item from an iterator.
@@ -84,11 +101,44 @@ void citer_free(iterator_t *);
 /*
  * Count the number of items in an iterator.
  *
- * Only works for finite iterators. Calling this function on an infinite
- * iterator will result in an infinite loop.
+ * Only works for finite iterators. Will return SIZE_MAX for iterators which are
+ * guaranteed to be finite. Otherwise will result in an infinite loop.
  *
- * This function will consume the iterator, but will not free it.
+ * This function may consume the iterator, but will not free it.
  */
 size_t citer_count(iterator_t *);
+
+/*
+ * Check if an iterator has an exact size.
+ * Returns 1 if the iterator has an exact known size and 0 otherwise.
+ */
+#define citer_has_exact_size(it) (citer_bound_is_exact((it)->size_bound))
+
+/*
+ * Whether an iterator is guaranteed to be finite.
+ *
+ * Returns 1 if and only if neither bound is infinite.
+ *
+ * It is possible for an iterator to be finite even when this macro returns 0.
+ * This macro checks whether an iterator is guaranteed to be finite, not whether
+ * it is possible.
+ */
+#define citer_is_finite(it) (!(it)->size_bound.lower_infinite && !(it)->size_bound.upper_infinite)
+
+/*
+ * Whether an iterator is guaranteed to be infinite.
+ *
+ * Returns 1 if and only if the iterator's lower size bound is infinite.
+ *
+ * It is possible for an iterator to return an infinite number of items even
+ * when this macro returns 0, because this macro checks whether it is guaranteed
+ * to be infinite, not whether it can be infinite.
+ */
+#define citer_is_infinite(it) (!!(it)->size_bound.lower_infinite)
+
+/*
+ * Check if an iterator has an exact size and is double-ended.
+ */
+#define CITER_HEDE(it) (citer_has_exact_size(it) && citer_is_double_ended(it))
 
 #endif /* _CITER_ITERATOR_H_ */

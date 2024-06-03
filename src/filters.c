@@ -22,6 +22,9 @@
 #include <stdlib.h>
 
 bool citer_all(iterator_t *it, citer_predicate_t predicate, void *extra_data) {
+    if (citer_is_infinite(it))
+        /* TODO: Notify caller of error. */
+        return NULL;
     void *item;
     while ((item = citer_next(it))) {
         if (!predicate(item, extra_data))
@@ -40,6 +43,9 @@ bool citer_any(iterator_t *it, citer_predicate_t predicate, void *extra_data) {
 }
 
 void *citer_max(iterator_t *it, citer_cmp_fn_t cmp, void *extra_data) {
+    if (citer_is_infinite(it))
+        /* TODO: Notify caller of error. */
+        return NULL;
     void *max = NULL;
     void *cur;
     while ((cur = citer_next(it))) {
@@ -50,6 +56,9 @@ void *citer_max(iterator_t *it, citer_cmp_fn_t cmp, void *extra_data) {
 }
 
 void *citer_min(iterator_t *it, citer_cmp_fn_t cmp, void *extra_data) {
+    if (citer_is_infinite(it))
+        /* TODO: Notify caller of error. */
+        return NULL;
     void *min = NULL;
     void *cur;
     while ((cur = citer_next(it))) {
@@ -73,20 +82,24 @@ typedef struct citer_filter_data {
     void *predicate_data;
 } citer_filter_data_t;
 
-static void *citer_filter_next(void *_data) {
-    citer_filter_data_t *data = (citer_filter_data_t *) _data;
+static void *citer_filter_next(iterator_t *self) {
+    citer_filter_data_t *data = (citer_filter_data_t *) self->data;
     void *item;
     while ((item = citer_next(data->orig))) {
+        /* Only decrease upper bound because bottom bound is 0. */
+        self->size_bound.upper--;
         if (data->predicate(item, data->predicate_data))
             return item;
     }
     return NULL;
 }
 
-static void *citer_filter_next_back(void *_data) {
-    citer_filter_data_t *data = (citer_filter_data_t *) _data;
+static void *citer_filter_next_back(iterator_t *self) {
+    citer_filter_data_t *data = (citer_filter_data_t *) self->data;
     void *item;
     while ((item = citer_next_back(data->orig))) {
+        /* Only decrease upper bound because bottom bound is 0. */
+        self->size_bound.upper--;
         if (data->predicate(item, data->predicate_data))
             return item;
     }
@@ -106,12 +119,17 @@ iterator_t *citer_filter(iterator_t *orig, citer_predicate_t predicate, void *ex
         .predicate = predicate,
         .predicate_data = extra_data,
     };
-    iterator_t *it = malloc(sizeof(*it));
-    *it = (iterator_t) {
-        .data = data,
-        .next = citer_filter_next,
-        .next_back = citer_is_double_ended(orig) ? citer_filter_next_back : NULL,
-        .free_data = citer_filter_free_data,
-    };
-    return it;
+
+    /* When filtering, the upper bound does not change. The lower bound is 0. */
+    citer_size_bound_t size_bound = orig->size_bound;
+    size_bound.lower = 0;
+    size_bound.lower_infinite = false;
+
+    return citer_new(
+        data,
+        citer_filter_next,
+        citer_is_double_ended(orig) ? citer_filter_next_back : NULL,
+        citer_filter_free_data,
+        size_bound
+    );
 }

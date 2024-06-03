@@ -23,8 +23,8 @@
 
 #include "iterator.h"
 
-typedef void *(*citer_map_fn_t)(void *);
-typedef iterator_t *(*citer_flat_map_fn_t)(void *);
+typedef void *(*citer_map_fn_t)(void *item, void *fn_data);
+typedef iterator_t *(*citer_flat_map_fn_t)(void *item, void *fn_data);
 
 /*
  * Accumulator function for citer_fold().
@@ -37,7 +37,24 @@ typedef iterator_t *(*citer_flat_map_fn_t)(void *);
  */
 typedef void *(*citer_accumulator_fn_t)(void *data, void *item);
 
-iterator_t *citer_map(iterator_t *, citer_map_fn_t);
+/*
+ * Map each item of an iterator using a given function.
+ *
+ * Parameters:
+ *   orig - The source iterator to map.
+ *   fn - The function to apply to each item. This function should take two
+ *        arguments: the first is the item to be processed, and the second is
+ *        custom data which can be used by the function.
+ *   fn_data - Custom data to be passed as the second argument to the mapping
+ *             function. This data can be anything (or nothing); it is up to
+ *             the user.
+ *
+ * Returns a new iterator which yields the result of the mapping function for
+ * each input item. This iterator must be freed after use using citer_free().
+ * Freeing this iterator will free the source iterator as well, but not the
+ * fn_data argument.
+ */
+iterator_t *citer_map(iterator_t *orig, citer_map_fn_t fn, void *fn_data);
 
 #define citer_flat_map(it, fn) citer_flatten(citer_map((it), (fn)))
 

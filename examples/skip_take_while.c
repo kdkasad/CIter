@@ -22,7 +22,9 @@
 
 #include <citer.h>
 
-static void *strptr_to_unsigned_long(void *item) {
+static void *strptr_to_unsigned_long(void *item, void *fn_data) {
+    (void) fn_data; /* Mark unused. */
+
     char *str = *((char **) item);
     unsigned long num;
     if (sscanf(str, "%lu", &num) != 1) {
@@ -43,7 +45,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	iterator_t *it = citer_over_array(argv + 1, sizeof(*argv), argc - 1);
-    it = citer_map(it, strptr_to_unsigned_long);
+    it = citer_map(it, strptr_to_unsigned_long, NULL);
     it = citer_skip_while(it, less_than, (void *) 10ul);
     it = citer_take_while(it, less_than, (void *) 50ul);
 

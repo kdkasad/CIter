@@ -20,50 +20,71 @@
 
 #include <stdlib.h>
 
-static void *citer_repeat_next(void *data) {
-	return data;
+static void *citer_repeat_next(iterator_t *self) {
+	return self->data;
 }
 
 static void citer_repeat_free_data(void *data) {
+	(void) data; /* Mark unused. */
 	return;
 }
 
 iterator_t *citer_repeat(void *item) {
-	iterator_t *it = malloc(sizeof(*it));
-	*it = (iterator_t) {
-		.data = item,
-		.next = citer_repeat_next,
-		.next_back = citer_repeat_next,
-		.free_data = citer_repeat_free_data,
+	citer_size_bound_t size_bound = {
+		.lower = 0,
+		.upper = 0,
+		.lower_infinite = true,
+		.upper_infinite = true
 	};
-	return it;
+	return citer_new(
+		item,
+		citer_repeat_next,
+		citer_repeat_next,
+		citer_repeat_free_data,
+		size_bound
+	);
 }
 
-/* We must use a struct so we can change the value of the item pointer from the
- * next(_back)? function. */
-typedef struct citer_once_data {
-	void *item;
-} citer_once_data_t;
-
-static void *citer_once_next(void *_data) {
-	citer_once_data_t *data = (citer_once_data_t *) _data;
+static void *citer_once_next(iterator_t *self) {
 	void *item = NULL;
-	if (data->item) {
-		item = data->item;
-		data->item = NULL;
+	if (self->data) {
+		self->size_bound.lower = 0;
+		self->size_bound.upper = 0;
+		item = self->data;
+		self->data = NULL;
 	}
 	return item;
 }
 
 iterator_t *citer_once(void *item) {
-	citer_once_data_t *data = malloc(sizeof(*data));
-	data->item = item;
-	iterator_t *it = malloc(sizeof(*it));
-	*it = (iterator_t) {
-		.data = data,
-		.next = citer_once_next,
-		.next_back = citer_once_next,
-		.free_data = free,
+	citer_size_bound_t size_bound = {
+		.lower = 1,
+		.upper = 1,
+		.lower_infinite = false,
+		.upper_infinite = false
+	};
+
+	return citer_new(
+		item,
+		citer_once_next,
+		citer_once_next,
+		free,
+		size_bound
+	);
+}
+
+/*
+ * Create an empty iterator.
+ *
+ * The returned iterator must be freed after use with citer_free().
+ */
+iterator_t *citer_empty(void) {
+	iterator_t *it = citer_repeat(NULL);
+	it->size_bound = (citer_size_bound_t) {
+		.lower = 0,
+		.upper = 0,
+		.lower_infinite = false,
+		.upper_infinite = false
 	};
 	return it;
 }

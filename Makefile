@@ -26,6 +26,7 @@ LICENSE_HEADER_LENGTH = 18
 # citer.h is constructed, the iterator_t type is defined for all subsequent
 # modules which use it.
 MODULES = \
+	size \
 	iterator \
 	filters \
 	repeat \
@@ -39,6 +40,7 @@ MODULES = \
 	inspect \
 	zip \
 	reverse
+HEADERONLY = size
 
 EXAMPLES = \
 	repeat_take \
@@ -49,7 +51,6 @@ EXAMPLES = \
 	enumerate \
 	minmax \
 	chunked \
-	collect \
 	count_using_fold \
 	sum \
 	inspect \
@@ -57,16 +58,23 @@ EXAMPLES = \
 	zip \
 	reverse \
 	double_ended
-EXAMPLES_BIN = $(addprefix examples/,$(EXAMPLES))
+
+TESTS = \
+	collect \
+	transform_reverse \
+	fuzz_size_bounds
+NORUN = fuzz_size_bounds
 
 STATICLIB = lib$(NAME).a
 DYLIB = lib$(NAME).so
 HEADER = $(NAME).h
-OBJS = $(patsubst %,build/%.o,$(MODULES))
+OBJS = $(patsubst %,build/%.o,$(filter-out $(HEADERONLY),$(MODULES)))
 SONAME = $(DYLIB).$(firstword $(subst ., ,$(VERSION)))
+EXAMPLES_BIN = $(addprefix examples/,$(EXAMPLES))
+TESTS_BIN = $(addprefix tests/,$(TESTS))
+TESTS_REPORTS = $(addsuffix .out,$(TESTS_BIN))
 
-CFLAGS = -Wall -Werror -std=c99 -fPIC
-CPPFLAGS = -I.
+CFLAGS = -Wall -Werror -std=c99
 
 ifneq ($(DBG),)
 # Debugging flags
@@ -77,13 +85,36 @@ else
 endif
 
 .PHONY: all
-all: $(STATICLIB) $(DYLIB).$(VERSION) $(HEADER) examples
+all: $(STATICLIB) $(DYLIB).$(VERSION) $(HEADER)
+
+.PHONY: help
+help: TGT = @printf '    %-24s %s\n'
+help:
+	@echo Available targets:
+	$(TGT) help "Print this help message"
+	$(TGT) all "Build header file and libraries"
+	$(TGT) examples "Build examples"
+	$(TGT) tests "Build tests"
+	$(TGT) clean "Clean all build outputs and artifacts"
+	$(TGT) clean-examples "Clean only examples"
+	$(TGT) clean-tests "Clean only tests"
+	$(TGT) check "Run tests"
+	$(TGT) install "Install header file and libraries to system"
+	$(TGT) uninstall "Reverse effects of 'install'"
+	@echo
+	@echo 'Set DBG=1 compile with debug symbols (make DBG=1 ...)'
 
 .PHONY: examples
 examples: $(EXAMPLES_BIN)
 
+.PHONY: tests
+tests: $(TESTS_BIN)
+
+# tests/fuzz_size_bounds requires some non-standard functions
+tests/fuzz_size_bounds: CFLAGS := $(filter-out -std=c99,$(CFLAGS)) -Wno-unused-result
+
 .PHONY: clean
-clean: | clean-examples
+clean: | clean-examples clean-tests
 	rm -f $(OBJS) $(STATICLIB) $(HEADER) $(DYLIB) $(DYLIB).$(VERSION) $(SONAME)
 	rm -fd build
 
@@ -91,18 +122,25 @@ clean: | clean-examples
 clean-examples:
 	rm -f $(EXAMPLES_BIN)
 
+.PHONY: clean-tests
+clean-tests:
+	rm -f $(TESTS_BIN)
+	rm -f $(TESTS_REPORTS)
+
 $(STATICLIB): $(OBJS)
 	ar crs $@ $^
 
 build:
 	mkdir -p build
 
+$(OBJS): CFLAGS += -fPIC
 $(OBJS): build/%.o: src/%.c $(HEADER) | build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
 
-$(EXAMPLES_BIN): LDFLAGS += -L.
-$(EXAMPLES_BIN): LDLIBS += -l$(NAME)
-$(EXAMPLES_BIN): examples/%: examples/%.c $(STATICLIB)
+$(EXAMPLES_BIN) $(TESTS_BIN): CPPFLAGS += -I.
+$(EXAMPLES_BIN) $(TESTS_BIN): LDFLAGS += -L.
+$(EXAMPLES_BIN) $(TESTS_BIN): LDLIBS += -l$(NAME)
+$(EXAMPLES_BIN) $(TESTS_BIN): %: %.c $(STATICLIB)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $< $(LDFLAGS) $(LDLIBS)
 
 $(HEADER): $(patsubst %,src/%.h,$(MODULES))
@@ -136,5 +174,5 @@ uninstall:
 	if command -v ldconfig >/dev/null 2>&1; then ldconfig; fi
 
 .PHONY: check
-check: $(EXAMPLES_BIN)
-	./examples/run_all.sh
+check: ./tests/run.sh tests
+	@$< $(filter-out $(NORUN),$(TESTS))

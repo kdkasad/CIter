@@ -25,7 +25,8 @@ void *sum_accumulator(void *data, void *item) {
     return (void *) (((unsigned long) data) + ((unsigned long) item));
 }
 
-void *strptr_to_unsigned_long(void *item) {
+void *strptr_to_unsigned_long(void *item, void *fn_data) {
+    (void) fn_data; /* Mark as unused */
     char *str = *((char **) item);
     unsigned long num;
     if (sscanf(str, "%lu", &num) != 1) {
@@ -42,7 +43,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	iterator_t *it = citer_over_array(argv + 1, sizeof(*argv), argc - 1);
-    it = citer_map(it, strptr_to_unsigned_long);
+    it = citer_map(it, strptr_to_unsigned_long, NULL);
 
     unsigned long sum = (unsigned long) citer_fold(it, sum_accumulator, (void *) 0);
     printf("Sum: %lu\n", sum);

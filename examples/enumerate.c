@@ -20,7 +20,8 @@
 
 #include <citer.h>
 
-static void *deref_char_ptr_ptr(void *item) {
+static void *deref_char_ptr_ptr(void *item, void *fn_data) {
+    (void) fn_data; /* Mark as unused */
     return (void *) (*((char **) item));
 }
 
@@ -31,7 +32,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	iterator_t *it = citer_over_array((void **) argv + 1, sizeof(*argv), argc - 1);
-    it = citer_map(it, deref_char_ptr_ptr);
+    it = citer_map(it, deref_char_ptr_ptr, NULL);
     it = citer_enumerate(it);
 
 	citer_enumerate_item_t *item;

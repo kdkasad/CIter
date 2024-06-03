@@ -42,7 +42,10 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build
-        run: make
+        run: make all examples tests
 
-      - name: Test
+      - name: Run examples
         run: ./examples/run_all.sh
+
+      - name: Run tests
+        run: make PRINT_ON_FAIL=1 check

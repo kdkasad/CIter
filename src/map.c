@@ -17,25 +17,27 @@
  */
 
 #include "map.h"
-#include "iterator.h"
 
 #include <stdlib.h>
 
 typedef struct citer_map_data {
     iterator_t *orig;
-    void *(*fn)(void *);
+    citer_map_fn_t fn;
+    void *fn_data;
 } citer_map_data_t;
 
-static void *citer_map_next(void *_data) {
-    citer_map_data_t *data = (citer_map_data_t *) _data;
+static void *citer_map_next(iterator_t *self) {
+    citer_bound_sub(self->size_bound, 1);
+    citer_map_data_t *data = (citer_map_data_t *) self->data;
     void *next = citer_next(data->orig);
-    return next ? data->fn(next) : NULL;
+    return next ? data->fn(next, data->fn_data) : NULL;
 }
 
-static void *citer_map_next_back(void *_data) {
-    citer_map_data_t *data = (citer_map_data_t *) _data;
+static void *citer_map_next_back(iterator_t *self) {
+    citer_bound_sub(self->size_bound, 1);
+    citer_map_data_t *data = (citer_map_data_t *) self->data;
     void *next = citer_next_back(data->orig);
-    return next ? data->fn(next) : NULL;
+    return next ? data->fn(next, data->fn_data) : NULL;
 }
 
 static void citer_map_free_data(void *_data) {
@@ -44,17 +46,37 @@ static void citer_map_free_data(void *_data) {
     free(data);
 }
 
-iterator_t *citer_map(iterator_t *orig, citer_map_fn_t fn) {
+/*
+ * Map each item of an iterator using a given function.
+ *
+ * Parameters:
+ *   orig - The source iterator to map.
+ *   fn - The function to apply to each item. This function should take two
+ *        arguments: the first is the item to be processed, and the second is
+ *        custom data which can be used by the function.
+ *   fn_data - Custom data to be passed as the second argument to the mapping
+ *             function. This data can be anything (or nothing); it is up to
+ *             the user.
+ *
+ * Returns a new iterator which yields the result of the mapping function for
+ * each input item. This iterator must be freed after use using citer_free().
+ * Freeing this iterator will free the source iterator as well, but not the
+ * fn_data argument.
+ */
+iterator_t *citer_map(iterator_t *orig, citer_map_fn_t fn, void *fn_data) {
     citer_map_data_t *data = malloc(sizeof(*data));
-    *data = (citer_map_data_t) { .orig = orig, .fn = fn };
-    iterator_t *it = malloc(sizeof(*it));
-    *it = (iterator_t) {
-        .data = data,
-        .next = citer_map_next,
-        .next_back = citer_is_double_ended(orig) ? citer_map_next_back : NULL,
-        .free_data = citer_map_free_data
+    *data = (citer_map_data_t) {
+        .orig = orig,
+        .fn = fn,
+        .fn_data = fn_data,
     };
-    return it;
+    return citer_new(
+        data,
+        citer_map_next,
+        citer_is_double_ended(orig) ? citer_map_next_back : NULL,
+        citer_map_free_data,
+        orig->size_bound
+    );
 }
 
 typedef struct citer_flatten_data {
@@ -63,8 +85,9 @@ typedef struct citer_flatten_data {
     iterator_t *cur_back;
 } citer_flatten_data_t;
 
-void *citer_flatten_next(void *_data) {
-    citer_flatten_data_t *data = (citer_flatten_data_t *) _data;
+void *citer_flatten_next(iterator_t *self) {
+    /* Here, we don't update the size bound because the bound is always [0, inf). */
+    citer_flatten_data_t *data = (citer_flatten_data_t *) self->data;
     void *item = NULL;
     while (!item) {
         if (data->cur) {
@@ -86,8 +109,9 @@ void *citer_flatten_next(void *_data) {
     return item;
 }
 
-void *citer_flatten_next_back(void *_data) {
-    citer_flatten_data_t *data = (citer_flatten_data_t *) _data;
+void *citer_flatten_next_back(iterator_t *self) {
+    /* Here, we don't update the size bound because the bound is always [0, inf). */
+    citer_flatten_data_t *data = (citer_flatten_data_t *) self->data;
     void *item = NULL;
     while (!item) {
         if (data->cur_back) {
@@ -124,15 +148,20 @@ iterator_t *citer_flatten(iterator_t *orig) {
     *data = (citer_flatten_data_t) {
         .orig = orig,
         .cur = NULL,
+        .cur_back = NULL,
     };
-    iterator_t *it = malloc(sizeof(*it));
-    *it = (iterator_t) {
-        .data = data,
-        .next = citer_flatten_next,
-        .next_back = citer_is_double_ended(orig) ? citer_flatten_next_back : NULL,
-        .free_data = citer_flatten_free_data,
-    };
-    return it;
+
+    /* It is impossible for us to know the resulting number of items. Each item
+     * in the input could be an empty iterator or an infinite one. */
+    citer_size_bound_t size_bound = CITER_DEFAULT_SIZE_BOUND;
+
+    return citer_new(
+        data,
+        citer_flatten_next,
+        citer_is_double_ended(orig) ? citer_flatten_next_back : NULL,
+        citer_flatten_free_data,
+        size_bound
+    );
 }
 
 /*

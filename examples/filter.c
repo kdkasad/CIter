@@ -22,7 +22,8 @@
 
 #include <citer.h>
 
-static void *deref_intptr(void *item) {
+static void *deref_intptr(void *item, void *fn_data) {
+    (void) fn_data; /* Mark as unused */
     return (void *) (long) *((int *) item);
 }
 
@@ -58,7 +59,7 @@ int main(int argc, char *argv[]) {
     }
 
 	iterator_t *it = citer_over_array(int_arr, sizeof(*int_arr), len);
-    it = citer_map(it, deref_intptr);
+    it = citer_map(it, deref_intptr, NULL);
     it = citer_filter(it, is_divisible_by, (void *) (long) divisor);
 
 	int item;

@@ -24,14 +24,11 @@ iterator_t *citer_reverse(iterator_t *orig) {
     if (!citer_is_double_ended(orig))
         return NULL;
 
-    /* Since we don't need to store extra data, we can just use the iterator as
-     * the data and use the normal next, next_back, and free functions. */
-    iterator_t *it = malloc(sizeof(*it));
-    *it = (iterator_t) {
-        .data = orig,
-        .next = (citer_next_fn) citer_next_back,
-        .next_back = (citer_next_fn) citer_next,
-        .free_data = (citer_free_data_fn) citer_free,
-    };
-    return it;
+    /* Since all we're doing is reversing the direction of the iterator, we can
+     * just swap the next and next_back functions, without allocating a new
+     * iterator. */
+    citer_next_fn tmp = orig->next;
+    orig->next = orig->next_back;
+    orig->next_back = tmp;
+    return orig;
 }

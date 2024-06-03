@@ -32,8 +32,9 @@
  * The input iterator must be double-ended. If it is not, this function will
  * return NULL.
  *
- * The returned iterator must be freed after use with citer_free(). Doing so
- * also frees the input iterator.
+ * This function literally swaps the next and next_back function pointers of the
+ * input iterator. Unlike other constructors, this function returns the input
+ * iterator, not a newly-allocated iterator.
  */
 iterator_t *citer_reverse(iterator_t *);
 
