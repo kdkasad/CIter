@@ -20,6 +20,8 @@
 
 # CIter: Lazily-evaluated iterators for C
 
+[![Build & test](https://github.com/kdkasad/CIter/actions/workflows/test.yml/badge.svg)](https://github.com/kdkasad/CIter/actions/workflows/test.yml)
+
 Inspired by [Rust](https://doc.rust-lang.org/std/iter/index.html),
 this library attempts to implement lazily-evaluated iterators in C.
 
