@@ -163,7 +163,7 @@ For finite iterators, every time the `next` or `next_back` functions are called,
 the size bound should be updated.
 
 An iterator is considered to have an exact size, i.e. be an exact-sized iterator,
-if and only if the lower and upper bounds are equal and neither is finite.
+if and only if the lower and upper bounds are equal and neither is infinite.
 
 If an iterator is exact-sized, it must stay exact-sized. An iterator which is
 exact-sized cannot change its size bounds to no longer be exact-sized.
